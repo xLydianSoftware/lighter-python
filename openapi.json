@@ -4374,7 +4374,7 @@
           "enum": [
             "inactive",
             "frozen",
-            "active",
+            "active"
           ]
         },
         "taker_fee": {
