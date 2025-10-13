@@ -5,11 +5,13 @@ This directory contains various signer implementations for the Lighter Protocol.
 ## Available Signers
 
 ### Native Binary Signers
+
 - `signer-amd64.so` - Linux AMD64 native signer
 - `signer-arm64.dylib` - macOS ARM64 native signer
 - `signer-amd64.dll` - Windows AMD64 native signer
 
-These binaries are compiled from the Go implementation in [lighter-go](https://github.com/elliottech/lighter-go) and provide high-performance cryptographic operations for the Lighter Protocol.
+These binaries are compiled from the Go implementation in [lighter-go](https://github.com/elliottech/lighter-go) and
+provide high-performance cryptographic operations for the Lighter Protocol.
 
 ## Usage
 
@@ -29,27 +31,27 @@ To build signers locally,Import lighter-go repo:
 
 ```bash
 # From lighter-go/ directory
-just prepare-linux-local      # Linux AMD64
-just prepare-mac-local         # macOS ARM64
-just prepare-windows-local     # Windows AMD64
+just build-linux-local        # Linux AMD64
+just build-darwin-local       # macOS ARM64
+just build-windows-local      # Windows AMD64
 ```
 
 Or use Docker for cross-compilation:
 
 ```bash
-just prepare-linux-docker
-just prepare-mac-docker
-just prepare-windows-docker
+just build-linux-docker
+just build-windows-docker
 ```
 
 ## Supported Platforms
 
 The Python SDK supports the following platforms out of the box:
 
-| Platform | Architecture | Binary |
-|----------|-------------|---------|
-| Linux | x86_64 | `signer-amd64.so` |
-| macOS | ARM64 (Apple Silicon) | `signer-arm64.dylib` |
-| Windows | x86_64 | `signer-amd64.dll` |
+| Platform | Architecture          | Binary               |
+|----------|-----------------------|----------------------|
+| Linux    | x86_64                | `signer-amd64.so`    |
+| macOS    | ARM64 (Apple Silicon) | `signer-arm64.dylib` |
+| Windows  | x86_64                | `signer-amd64.dll`   |
 
-If you encounter issues with missing binaries, ensure the appropriate signer binary is present in this directory. You can build it from `lighter-go/` using the commands above.
+If you encounter issues with missing binaries, ensure the appropriate signer binary is present in this directory. You
+can build it from `lighter-go/` using the commands above.
