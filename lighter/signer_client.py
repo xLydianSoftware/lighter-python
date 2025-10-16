@@ -566,7 +566,7 @@ class SignerClient:
         time_in_force,
         reduce_only=False,
         trigger_price=NIL_TRIGGER_PRICE,
-        order_expiry=-1,
+        order_expiry=DEFAULT_28_DAY_ORDER_EXPIRY,
         nonce=-1,
         api_key_index=-1,
     ) -> (CreateOrder, TxHash, str):
