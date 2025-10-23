@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG)
 # It serves as a good example
 BASE_URL = "https://testnet.zklighter.elliot.ai"
 ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
-API_KEY_INDEX = 1
+API_KEY_INDEX = 3
 
 
 async def main():
@@ -20,7 +20,9 @@ async def main():
     eth_address = eth_acc.address
 
     try:
-        response = await lighter.AccountApi(api_client).accounts_by_l1_address(l1_address=eth_address)
+        response = await lighter.AccountApi(api_client).accounts_by_l1_address(
+            l1_address=eth_address
+        )
     except lighter.ApiException as e:
         if e.data.message == "account not found":
             print(f"error: account not found for {eth_address}")
@@ -31,7 +33,9 @@ async def main():
     if len(response.sub_accounts) > 1:
         for sub_account in response.sub_accounts:
             print(f"found accountIndex: {sub_account.index}")
-        raise Exception(f"found found multiple account indexes: {len(response.sub_accounts)}")
+
+        print("multiple accounts found, using the first one")
+        account_index = response.sub_accounts[0].index
     else:
         account_index = response.sub_accounts[0].index
 
