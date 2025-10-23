@@ -41,7 +41,7 @@ async def main():
         is_ask=True,
         order_type=lighter.SignerClient.ORDER_TYPE_LIMIT,
         time_in_force=lighter.SignerClient.ORDER_TIME_IN_FORCE_GOOD_TILL_TIME,
-        reduce_only=0,
+        reduce_only=False,
         trigger_price=0,
     )
     print(f"Create Order {tx=} {tx_hash=} {err=}")
