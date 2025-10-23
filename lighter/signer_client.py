@@ -95,7 +95,7 @@ def process_api_key_and_nonce(func):
         try:
             partial_arguments = {k: v for k, v in bound_args.arguments.items() if k not in ("self", "nonce", "api_key_index")}
             created_tx, ret, err = await func(self, **partial_arguments, nonce=nonce, api_key_index=api_key_index)
-            if ret.code != CODE_OK:
+            if (ret is None and err) or (ret and ret.code != CODE_OK):
                 self.nonce_manager.acknowledge_failure(api_key_index)
         except lighter.exceptions.BadRequestException as e:
             if "invalid nonce" in str(e):
