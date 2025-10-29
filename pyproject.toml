@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "lighter-sdk"
+name = "qubx-lighter-api"
 version = "0.1.4"
 description = "Python client for Lighter"
 authors = ["elliot"]

@@ -20,7 +20,7 @@ from setuptools import setup, find_packages  # noqa: H301
 #
 # prerequisite: setuptools
 # http://pypi.python.org/pypi/setuptools
-NAME = "lighter-sdk"
+NAME = "qubx-lighter-api"
 VERSION = "0.1.4"
 PYTHON_REQUIRES = ">=3.7"
 REQUIRES = [
