@@ -36,7 +36,6 @@ class FundingApi:
         self.api_client = api_client
 
 
-    @validate_call
     async def funding_rates(
         self,
         _request_timeout: Union[
@@ -54,7 +53,7 @@ class FundingApi:
     ) -> FundingRates:
         """funding-rates
 
-        Get funding rates
+        Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -100,7 +99,6 @@ class FundingApi:
         ).data
 
 
-    @validate_call
     async def funding_rates_with_http_info(
         self,
         _request_timeout: Union[
@@ -118,7 +116,7 @@ class FundingApi:
     ) -> ApiResponse[FundingRates]:
         """funding-rates
 
-        Get funding rates
+        Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -164,7 +162,6 @@ class FundingApi:
         )
 
 
-    @validate_call
     async def funding_rates_without_preload_content(
         self,
         _request_timeout: Union[
@@ -182,7 +179,7 @@ class FundingApi:
     ) -> RESTResponseType:
         """funding-rates
 
-        Get funding rates
+        Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

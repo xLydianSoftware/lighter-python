@@ -40,7 +40,6 @@ class BlockApi:
         self.api_client = api_client
 
 
-    @validate_call
     async def block(
         self,
         by: StrictStr,
@@ -112,7 +111,6 @@ class BlockApi:
         ).data
 
 
-    @validate_call
     async def block_with_http_info(
         self,
         by: StrictStr,
@@ -184,7 +182,6 @@ class BlockApi:
         )
 
 
-    @validate_call
     async def block_without_preload_content(
         self,
         by: StrictStr,
@@ -320,7 +317,6 @@ class BlockApi:
 
 
 
-    @validate_call
     async def blocks(
         self,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
@@ -396,7 +392,6 @@ class BlockApi:
         ).data
 
 
-    @validate_call
     async def blocks_with_http_info(
         self,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
@@ -472,7 +467,6 @@ class BlockApi:
         )
 
 
-    @validate_call
     async def blocks_without_preload_content(
         self,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
@@ -617,7 +611,6 @@ class BlockApi:
 
 
 
-    @validate_call
     async def current_height(
         self,
         _request_timeout: Union[
@@ -681,7 +674,6 @@ class BlockApi:
         ).data
 
 
-    @validate_call
     async def current_height_with_http_info(
         self,
         _request_timeout: Union[
@@ -745,7 +737,6 @@ class BlockApi:
         )
 
 
-    @validate_call
     async def current_height_without_preload_content(
         self,
         _request_timeout: Union[

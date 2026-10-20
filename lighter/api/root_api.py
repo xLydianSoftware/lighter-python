@@ -37,7 +37,6 @@ class RootApi:
         self.api_client = api_client
 
 
-    @validate_call
     async def info(
         self,
         _request_timeout: Union[
@@ -101,7 +100,6 @@ class RootApi:
         ).data
 
 
-    @validate_call
     async def info_with_http_info(
         self,
         _request_timeout: Union[
@@ -165,7 +163,6 @@ class RootApi:
         )
 
 
-    @validate_call
     async def info_without_preload_content(
         self,
         _request_timeout: Union[
@@ -283,7 +280,6 @@ class RootApi:
 
 
 
-    @validate_call
     async def status(
         self,
         _request_timeout: Union[
@@ -347,7 +343,6 @@ class RootApi:
         ).data
 
 
-    @validate_call
     async def status_with_http_info(
         self,
         _request_timeout: Union[
@@ -411,7 +406,6 @@ class RootApi:
         )
 
 
-    @validate_call
     async def status_without_preload_content(
         self,
         _request_timeout: Union[

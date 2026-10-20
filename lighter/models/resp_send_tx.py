@@ -30,7 +30,7 @@ class RespSendTx(BaseModel):
     message: Optional[StrictStr] = None
     tx_hash: StrictStr
     predicted_execution_time_ms: StrictInt
-    volume_quota_remaining: Optional[StrictInt] = None
+    volume_quota_remaining: StrictInt
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "tx_hash", "predicted_execution_time_ms", "volume_quota_remaining"]
 
@@ -91,7 +91,7 @@ class RespSendTx(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "tx_hash": obj.get("tx_hash"),

@@ -4,12 +4,284 @@ All URIs are relative to *https://mainnet.zklighter.elliot.ai*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**layer1_basic_info**](InfoApi.md#layer1_basic_info) | **GET** /api/v1/layer1BasicInfo | layer1BasicInfo
+[**price_oracle_info**](InfoApi.md#price_oracle_info) | **GET** /api/v1/priceOracleInfo | priceOracleInfo
+[**synthetic_spot_info**](InfoApi.md#synthetic_spot_info) | **GET** /api/v1/syntheticSpotInfo | syntheticSpotInfo
+[**system_config**](InfoApi.md#system_config) | **GET** /api/v1/systemConfig | systemConfig
 [**transfer_fee_info**](InfoApi.md#transfer_fee_info) | **GET** /api/v1/transferFeeInfo | transferFeeInfo
 [**withdrawal_delay**](InfoApi.md#withdrawal_delay) | **GET** /api/v1/withdrawalDelay | withdrawalDelay
 
 
+# **layer1_basic_info**
+> Layer1BasicInfo layer1_basic_info()
+
+layer1BasicInfo
+
+Get zklighter l1 general info, including contract address and rpc info
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.layer1_basic_info import Layer1BasicInfo
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.InfoApi(api_client)
+
+    try:
+        # layer1BasicInfo
+        api_response = await api_instance.layer1_basic_info()
+        print("The response of InfoApi->layer1_basic_info:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling InfoApi->layer1_basic_info: %s\n" % e)
+```
+
+
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**Layer1BasicInfo**](Layer1BasicInfo.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **price_oracle_info**
+> RespPriceOracleInfo price_oracle_info(symbol=symbol)
+
+priceOracleInfo
+
+Get price oracle info (source in use, median exchanges, price cap) for all markets or a single symbol
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_price_oracle_info import RespPriceOracleInfo
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.InfoApi(api_client)
+    symbol = 'symbol_example' # str |  (optional)
+
+    try:
+        # priceOracleInfo
+        api_response = await api_instance.price_oracle_info(symbol=symbol)
+        print("The response of InfoApi->price_oracle_info:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling InfoApi->price_oracle_info: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **symbol** | **str**|  | [optional] 
+
+### Return type
+
+[**RespPriceOracleInfo**](RespPriceOracleInfo.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **synthetic_spot_info**
+> RespSyntheticSpotInfo synthetic_spot_info(symbol)
+
+syntheticSpotInfo
+
+Get synthetic spot info for a symbol. For complete details see: https://docs.lighter.xyz/trading/real-world-assets-rwas/us-equity-indices
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_synthetic_spot_info import RespSyntheticSpotInfo
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.InfoApi(api_client)
+    symbol = 'symbol_example' # str | 
+
+    try:
+        # syntheticSpotInfo
+        api_response = await api_instance.synthetic_spot_info(symbol)
+        print("The response of InfoApi->synthetic_spot_info:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling InfoApi->synthetic_spot_info: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **symbol** | **str**|  | 
+
+### Return type
+
+[**RespSyntheticSpotInfo**](RespSyntheticSpotInfo.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **system_config**
+> SystemConfig system_config()
+
+systemConfig
+
+Get system config
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.system_config import SystemConfig
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.InfoApi(api_client)
+
+    try:
+        # systemConfig
+        api_response = await api_instance.system_config()
+        print("The response of InfoApi->system_config:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling InfoApi->system_config: %s\n" % e)
+```
+
+
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**SystemConfig**](SystemConfig.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **transfer_fee_info**
-> TransferFeeInfo transfer_fee_info(account_index, authorization=authorization, auth=auth, to_account_index=to_account_index)
+> TransferFeeInfo transfer_fee_info(authorization, account_index, to_account_index=to_account_index)
 
 transferFeeInfo
 
@@ -35,14 +307,13 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.InfoApi(api_client)
+    authorization = 'authorization_example' # str | 
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
-    to_account_index = -1 # int |  (optional) (default to -1)
+    to_account_index = 56 # int |  (optional)
 
     try:
         # transferFeeInfo
-        api_response = await api_instance.transfer_fee_info(account_index, authorization=authorization, auth=auth, to_account_index=to_account_index)
+        api_response = await api_instance.transfer_fee_info(authorization, account_index, to_account_index=to_account_index)
         print("The response of InfoApi->transfer_fee_info:\n")
         pprint(api_response)
     except Exception as e:
@@ -56,10 +327,9 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **account_index** | **int**|  | 
- **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
- **to_account_index** | **int**|  | [optional] [default to -1]
+ **to_account_index** | **int**|  | [optional] 
 
 ### Return type
 

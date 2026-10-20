@@ -22,10 +22,13 @@ from typing_extensions import Annotated
 from lighter.models.asset_details import AssetDetails
 from lighter.models.exchange_stats import ExchangeStats
 from lighter.models.export_data import ExportData
+from lighter.models.historical_trades_export_data import HistoricalTradesExportData
 from lighter.models.order_book_details import OrderBookDetails
 from lighter.models.order_book_orders import OrderBookOrders
 from lighter.models.order_books import OrderBooks
 from lighter.models.orders import Orders
+from lighter.models.resp_get_exchange_metrics import RespGetExchangeMetrics
+from lighter.models.resp_get_execute_stats import RespGetExecuteStats
 from lighter.models.trades import Trades
 
 from lighter.api_client import ApiClient, RequestSerialized
@@ -48,10 +51,10 @@ class OrderApi:
 
     async def account_active_orders(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
-        market_id: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        market_id: Annotated[Optional[StrictInt], Field(description="If not specified, returns active orders for all markets.")] = None,
+        market_type: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -69,14 +72,14 @@ class OrderApi:
 
         Get account active orders. `auth` can be generated using the SDK.
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
-        :param market_id: (required)
+        :param market_id: If not specified, returns active orders for all markets.
         :type market_id: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
+        :param market_type:
+        :type market_type: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -100,10 +103,10 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._account_active_orders_serialize(
+            authorization=authorization,
             account_index=account_index,
             market_id=market_id,
-            authorization=authorization,
-            auth=auth,
+            market_type=market_type,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -125,13 +128,12 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def account_active_orders_with_http_info(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
-        market_id: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        market_id: Annotated[Optional[StrictInt], Field(description="If not specified, returns active orders for all markets.")] = None,
+        market_type: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -149,14 +151,14 @@ class OrderApi:
 
         Get account active orders. `auth` can be generated using the SDK.
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
-        :param market_id: (required)
+        :param market_id: If not specified, returns active orders for all markets.
         :type market_id: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
+        :param market_type:
+        :type market_type: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -180,10 +182,10 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._account_active_orders_serialize(
+            authorization=authorization,
             account_index=account_index,
             market_id=market_id,
-            authorization=authorization,
-            auth=auth,
+            market_type=market_type,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -205,13 +207,12 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def account_active_orders_without_preload_content(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
-        market_id: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        market_id: Annotated[Optional[StrictInt], Field(description="If not specified, returns active orders for all markets.")] = None,
+        market_type: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -229,14 +230,14 @@ class OrderApi:
 
         Get account active orders. `auth` can be generated using the SDK.
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
-        :param market_id: (required)
+        :param market_id: If not specified, returns active orders for all markets.
         :type market_id: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
+        :param market_type:
+        :type market_type: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -260,10 +261,10 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._account_active_orders_serialize(
+            authorization=authorization,
             account_index=account_index,
             market_id=market_id,
-            authorization=authorization,
-            auth=auth,
+            market_type=market_type,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -283,10 +284,10 @@ class OrderApi:
 
     def _account_active_orders_serialize(
         self,
+        authorization,
         account_index,
         market_id,
-        authorization,
-        auth,
+        market_type,
         _request_auth,
         _content_type,
         _headers,
@@ -315,9 +316,9 @@ class OrderApi:
             
             _query_params.append(('market_id', market_id))
             
-        if auth is not None:
+        if market_type is not None:
             
-            _query_params.append(('auth', auth))
+            _query_params.append(('market_type', market_type))
             
         # process the header parameters
         if authorization is not None:
@@ -357,17 +358,16 @@ class OrderApi:
 
 
 
-    @validate_call
     async def account_inactive_orders(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         market_id: Optional[StrictInt] = None,
         ask_filter: Optional[StrictInt] = None,
         between_timestamps: Optional[StrictStr] = None,
         cursor: Optional[StrictStr] = None,
+        market_type: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -383,16 +383,14 @@ class OrderApi:
     ) -> Orders:
         """accountInactiveOrders
 
-        Get account inactive orders
+        Get account inactive orders. `auth` can be generated using the SDK.
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
         :param limit: (required)
         :type limit: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param market_id:
         :type market_id: int
         :param ask_filter:
@@ -401,6 +399,8 @@ class OrderApi:
         :type between_timestamps: str
         :param cursor:
         :type cursor: str
+        :param market_type:
+        :type market_type: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -424,14 +424,14 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._account_inactive_orders_serialize(
+            authorization=authorization,
             account_index=account_index,
             limit=limit,
-            authorization=authorization,
-            auth=auth,
             market_id=market_id,
             ask_filter=ask_filter,
             between_timestamps=between_timestamps,
             cursor=cursor,
+            market_type=market_type,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -453,17 +453,16 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def account_inactive_orders_with_http_info(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         market_id: Optional[StrictInt] = None,
         ask_filter: Optional[StrictInt] = None,
         between_timestamps: Optional[StrictStr] = None,
         cursor: Optional[StrictStr] = None,
+        market_type: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -479,16 +478,14 @@ class OrderApi:
     ) -> ApiResponse[Orders]:
         """accountInactiveOrders
 
-        Get account inactive orders
+        Get account inactive orders. `auth` can be generated using the SDK.
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
         :param limit: (required)
         :type limit: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param market_id:
         :type market_id: int
         :param ask_filter:
@@ -497,6 +494,8 @@ class OrderApi:
         :type between_timestamps: str
         :param cursor:
         :type cursor: str
+        :param market_type:
+        :type market_type: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -520,14 +519,14 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._account_inactive_orders_serialize(
+            authorization=authorization,
             account_index=account_index,
             limit=limit,
-            authorization=authorization,
-            auth=auth,
             market_id=market_id,
             ask_filter=ask_filter,
             between_timestamps=between_timestamps,
             cursor=cursor,
+            market_type=market_type,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -549,17 +548,16 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def account_inactive_orders_without_preload_content(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         market_id: Optional[StrictInt] = None,
         ask_filter: Optional[StrictInt] = None,
         between_timestamps: Optional[StrictStr] = None,
         cursor: Optional[StrictStr] = None,
+        market_type: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -575,16 +573,14 @@ class OrderApi:
     ) -> RESTResponseType:
         """accountInactiveOrders
 
-        Get account inactive orders
+        Get account inactive orders. `auth` can be generated using the SDK.
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
         :param limit: (required)
         :type limit: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param market_id:
         :type market_id: int
         :param ask_filter:
@@ -593,6 +589,8 @@ class OrderApi:
         :type between_timestamps: str
         :param cursor:
         :type cursor: str
+        :param market_type:
+        :type market_type: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -616,14 +614,14 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._account_inactive_orders_serialize(
+            authorization=authorization,
             account_index=account_index,
             limit=limit,
-            authorization=authorization,
-            auth=auth,
             market_id=market_id,
             ask_filter=ask_filter,
             between_timestamps=between_timestamps,
             cursor=cursor,
+            market_type=market_type,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -643,14 +641,14 @@ class OrderApi:
 
     def _account_inactive_orders_serialize(
         self,
+        authorization,
         account_index,
         limit,
-        authorization,
-        auth,
         market_id,
         ask_filter,
         between_timestamps,
         cursor,
+        market_type,
         _request_auth,
         _content_type,
         _headers,
@@ -671,10 +669,6 @@ class OrderApi:
 
         # process the path parameters
         # process the query parameters
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
-            
         if account_index is not None:
             
             _query_params.append(('account_index', account_index))
@@ -698,6 +692,10 @@ class OrderApi:
         if limit is not None:
             
             _query_params.append(('limit', limit))
+            
+        if market_type is not None:
+            
+            _query_params.append(('market_type', market_type))
             
         # process the header parameters
         if authorization is not None:
@@ -737,7 +735,298 @@ class OrderApi:
 
 
 
-    @validate_call
+    async def account_orders(
+        self,
+        authorization: StrictStr,
+        client_order_indexes: Annotated[StrictStr, Field(description=" comma-separated int64s, e.g. \"123,456\", with a limit of 20.")],
+        account_index: Optional[StrictInt] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> Orders:
+        """accountOrders
+
+        Get account orders by client order indexes. Account index defaults to the authorization token's account. Supports the last 10K active orders (with no time limits), or the last 1K inactive orders (in the last 24 hours).
+
+        :param authorization: (required)
+        :type authorization: str
+        :param client_order_indexes:  comma-separated int64s, e.g. \"123,456\", with a limit of 20. (required)
+        :type client_order_indexes: str
+        :param account_index:
+        :type account_index: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._account_orders_serialize(
+            authorization=authorization,
+            client_order_indexes=client_order_indexes,
+            account_index=account_index,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "Orders",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def account_orders_with_http_info(
+        self,
+        authorization: StrictStr,
+        client_order_indexes: Annotated[StrictStr, Field(description=" comma-separated int64s, e.g. \"123,456\", with a limit of 20.")],
+        account_index: Optional[StrictInt] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[Orders]:
+        """accountOrders
+
+        Get account orders by client order indexes. Account index defaults to the authorization token's account. Supports the last 10K active orders (with no time limits), or the last 1K inactive orders (in the last 24 hours).
+
+        :param authorization: (required)
+        :type authorization: str
+        :param client_order_indexes:  comma-separated int64s, e.g. \"123,456\", with a limit of 20. (required)
+        :type client_order_indexes: str
+        :param account_index:
+        :type account_index: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._account_orders_serialize(
+            authorization=authorization,
+            client_order_indexes=client_order_indexes,
+            account_index=account_index,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "Orders",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def account_orders_without_preload_content(
+        self,
+        authorization: StrictStr,
+        client_order_indexes: Annotated[StrictStr, Field(description=" comma-separated int64s, e.g. \"123,456\", with a limit of 20.")],
+        account_index: Optional[StrictInt] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """accountOrders
+
+        Get account orders by client order indexes. Account index defaults to the authorization token's account. Supports the last 10K active orders (with no time limits), or the last 1K inactive orders (in the last 24 hours).
+
+        :param authorization: (required)
+        :type authorization: str
+        :param client_order_indexes:  comma-separated int64s, e.g. \"123,456\", with a limit of 20. (required)
+        :type client_order_indexes: str
+        :param account_index:
+        :type account_index: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._account_orders_serialize(
+            authorization=authorization,
+            client_order_indexes=client_order_indexes,
+            account_index=account_index,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "Orders",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _account_orders_serialize(
+        self,
+        authorization,
+        client_order_indexes,
+        account_index,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if account_index is not None:
+            
+            _query_params.append(('account_index', account_index))
+            
+        if client_order_indexes is not None:
+            
+            _query_params.append(('client_order_indexes', client_order_indexes))
+            
+        # process the header parameters
+        if authorization is not None:
+            _header_params['authorization'] = authorization
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/accountOrders',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
     async def asset_details(
         self,
         asset_id: Optional[StrictInt] = None,
@@ -756,7 +1045,7 @@ class OrderApi:
     ) -> AssetDetails:
         """assetDetails
 
-        Get asset details
+        Get asset details for a specific asset or all assets
 
         :param asset_id:
         :type asset_id: int
@@ -823,7 +1112,7 @@ class OrderApi:
     ) -> ApiResponse[AssetDetails]:
         """assetDetails
 
-        Get asset details
+        Get asset details for a specific asset or all assets
 
         :param asset_id:
         :type asset_id: int
@@ -890,7 +1179,7 @@ class OrderApi:
     ) -> RESTResponseType:
         """assetDetails
 
-        Get asset details
+        Get asset details for a specific asset or all assets
 
         :param asset_id:
         :type asset_id: int
@@ -998,7 +1287,317 @@ class OrderApi:
 
 
 
-    @validate_call
+    async def exchange_metrics(
+        self,
+        period: StrictStr,
+        kind: StrictStr,
+        filter: Optional[StrictStr] = None,
+        value: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RespGetExchangeMetrics:
+        """exchangeMetrics
+
+        Get exchange metrics. When filtering by market, use the market symbol as a value.
+
+        :param period: (required)
+        :type period: str
+        :param kind: (required)
+        :type kind: str
+        :param filter:
+        :type filter: str
+        :param value:
+        :type value: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._exchange_metrics_serialize(
+            period=period,
+            kind=kind,
+            filter=filter,
+            value=value,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RespGetExchangeMetrics",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def exchange_metrics_with_http_info(
+        self,
+        period: StrictStr,
+        kind: StrictStr,
+        filter: Optional[StrictStr] = None,
+        value: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[RespGetExchangeMetrics]:
+        """exchangeMetrics
+
+        Get exchange metrics. When filtering by market, use the market symbol as a value.
+
+        :param period: (required)
+        :type period: str
+        :param kind: (required)
+        :type kind: str
+        :param filter:
+        :type filter: str
+        :param value:
+        :type value: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._exchange_metrics_serialize(
+            period=period,
+            kind=kind,
+            filter=filter,
+            value=value,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RespGetExchangeMetrics",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def exchange_metrics_without_preload_content(
+        self,
+        period: StrictStr,
+        kind: StrictStr,
+        filter: Optional[StrictStr] = None,
+        value: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """exchangeMetrics
+
+        Get exchange metrics. When filtering by market, use the market symbol as a value.
+
+        :param period: (required)
+        :type period: str
+        :param kind: (required)
+        :type kind: str
+        :param filter:
+        :type filter: str
+        :param value:
+        :type value: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._exchange_metrics_serialize(
+            period=period,
+            kind=kind,
+            filter=filter,
+            value=value,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RespGetExchangeMetrics",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _exchange_metrics_serialize(
+        self,
+        period,
+        kind,
+        filter,
+        value,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if period is not None:
+            
+            _query_params.append(('period', period))
+            
+        if kind is not None:
+            
+            _query_params.append(('kind', kind))
+            
+        if filter is not None:
+            
+            _query_params.append(('filter', filter))
+            
+        if value is not None:
+            
+            _query_params.append(('value', value))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/exchangeMetrics',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
     async def exchange_stats(
         self,
         _request_timeout: Union[
@@ -1062,7 +1661,6 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def exchange_stats_with_http_info(
         self,
         _request_timeout: Union[
@@ -1126,7 +1724,6 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def exchange_stats_without_preload_content(
         self,
         _request_timeout: Union[
@@ -1244,14 +1841,278 @@ class OrderApi:
 
 
 
-    @validate_call
+    async def execute_stats(
+        self,
+        period: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RespGetExecuteStats:
+        """executeStats
+
+        Get execute stats
+
+        :param period: (required)
+        :type period: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._execute_stats_serialize(
+            period=period,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RespGetExecuteStats",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def execute_stats_with_http_info(
+        self,
+        period: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[RespGetExecuteStats]:
+        """executeStats
+
+        Get execute stats
+
+        :param period: (required)
+        :type period: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._execute_stats_serialize(
+            period=period,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RespGetExecuteStats",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def execute_stats_without_preload_content(
+        self,
+        period: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """executeStats
+
+        Get execute stats
+
+        :param period: (required)
+        :type period: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._execute_stats_serialize(
+            period=period,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RespGetExecuteStats",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _execute_stats_serialize(
+        self,
+        period,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if period is not None:
+            
+            _query_params.append(('period', period))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/executeStats',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
     async def export(
         self,
+        authorization: StrictStr,
         type: StrictStr,
-        authorization: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         account_index: Optional[StrictInt] = None,
         market_id: Optional[StrictInt] = None,
+        start_timestamp: Optional[Annotated[int, Field(le=1830297600000, strict=True, ge=1735689600000)]] = None,
+        end_timestamp: Optional[Annotated[int, Field(le=1830297600000, strict=True, ge=1735689600000)]] = None,
+        side: Optional[StrictStr] = None,
+        role: Optional[StrictStr] = None,
+        trade_type: Optional[StrictStr] = None,
+        aggregate: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1267,18 +2128,28 @@ class OrderApi:
     ) -> ExportData:
         """export
 
-        Export data
+        Export trades and funding payments, limited to 12 months or 1M trades. END_TS_IN_MS - START_TS_IN_MS should not be larger than 12 months in milliseconds, both timestamps should be greater than or equal to 17 January 2025 00:00:00 UTC (lighter's mainnet genesis)
 
+        :param authorization: (required)
+        :type authorization: str
         :param type: (required)
         :type type: str
-        :param authorization:
-        :type authorization: str
-        :param auth:
-        :type auth: str
         :param account_index:
         :type account_index: int
         :param market_id:
         :type market_id: int
+        :param start_timestamp:
+        :type start_timestamp: int
+        :param end_timestamp:
+        :type end_timestamp: int
+        :param side:
+        :type side: str
+        :param role:
+        :type role: str
+        :param trade_type:
+        :type trade_type: str
+        :param aggregate:
+        :type aggregate: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1302,11 +2173,16 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._export_serialize(
-            type=type,
             authorization=authorization,
-            auth=auth,
+            type=type,
             account_index=account_index,
             market_id=market_id,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            side=side,
+            role=role,
+            trade_type=trade_type,
+            aggregate=aggregate,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1328,14 +2204,18 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def export_with_http_info(
         self,
+        authorization: StrictStr,
         type: StrictStr,
-        authorization: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         account_index: Optional[StrictInt] = None,
         market_id: Optional[StrictInt] = None,
+        start_timestamp: Optional[Annotated[int, Field(le=1830297600000, strict=True, ge=1735689600000)]] = None,
+        end_timestamp: Optional[Annotated[int, Field(le=1830297600000, strict=True, ge=1735689600000)]] = None,
+        side: Optional[StrictStr] = None,
+        role: Optional[StrictStr] = None,
+        trade_type: Optional[StrictStr] = None,
+        aggregate: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1351,18 +2231,28 @@ class OrderApi:
     ) -> ApiResponse[ExportData]:
         """export
 
-        Export data
+        Export trades and funding payments, limited to 12 months or 1M trades. END_TS_IN_MS - START_TS_IN_MS should not be larger than 12 months in milliseconds, both timestamps should be greater than or equal to 17 January 2025 00:00:00 UTC (lighter's mainnet genesis)
 
+        :param authorization: (required)
+        :type authorization: str
         :param type: (required)
         :type type: str
-        :param authorization:
-        :type authorization: str
-        :param auth:
-        :type auth: str
         :param account_index:
         :type account_index: int
         :param market_id:
         :type market_id: int
+        :param start_timestamp:
+        :type start_timestamp: int
+        :param end_timestamp:
+        :type end_timestamp: int
+        :param side:
+        :type side: str
+        :param role:
+        :type role: str
+        :param trade_type:
+        :type trade_type: str
+        :param aggregate:
+        :type aggregate: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1386,11 +2276,16 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._export_serialize(
-            type=type,
             authorization=authorization,
-            auth=auth,
+            type=type,
             account_index=account_index,
             market_id=market_id,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            side=side,
+            role=role,
+            trade_type=trade_type,
+            aggregate=aggregate,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1412,14 +2307,18 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def export_without_preload_content(
         self,
+        authorization: StrictStr,
         type: StrictStr,
-        authorization: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         account_index: Optional[StrictInt] = None,
         market_id: Optional[StrictInt] = None,
+        start_timestamp: Optional[Annotated[int, Field(le=1830297600000, strict=True, ge=1735689600000)]] = None,
+        end_timestamp: Optional[Annotated[int, Field(le=1830297600000, strict=True, ge=1735689600000)]] = None,
+        side: Optional[StrictStr] = None,
+        role: Optional[StrictStr] = None,
+        trade_type: Optional[StrictStr] = None,
+        aggregate: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1435,18 +2334,28 @@ class OrderApi:
     ) -> RESTResponseType:
         """export
 
-        Export data
+        Export trades and funding payments, limited to 12 months or 1M trades. END_TS_IN_MS - START_TS_IN_MS should not be larger than 12 months in milliseconds, both timestamps should be greater than or equal to 17 January 2025 00:00:00 UTC (lighter's mainnet genesis)
 
+        :param authorization: (required)
+        :type authorization: str
         :param type: (required)
         :type type: str
-        :param authorization:
-        :type authorization: str
-        :param auth:
-        :type auth: str
         :param account_index:
         :type account_index: int
         :param market_id:
         :type market_id: int
+        :param start_timestamp:
+        :type start_timestamp: int
+        :param end_timestamp:
+        :type end_timestamp: int
+        :param side:
+        :type side: str
+        :param role:
+        :type role: str
+        :param trade_type:
+        :type trade_type: str
+        :param aggregate:
+        :type aggregate: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1470,11 +2379,16 @@ class OrderApi:
         """ # noqa: E501
 
         _param = self._export_serialize(
-            type=type,
             authorization=authorization,
-            auth=auth,
+            type=type,
             account_index=account_index,
             market_id=market_id,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            side=side,
+            role=role,
+            trade_type=trade_type,
+            aggregate=aggregate,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1494,11 +2408,16 @@ class OrderApi:
 
     def _export_serialize(
         self,
-        type,
         authorization,
-        auth,
+        type,
         account_index,
         market_id,
+        start_timestamp,
+        end_timestamp,
+        side,
+        role,
+        trade_type,
+        aggregate,
         _request_auth,
         _content_type,
         _headers,
@@ -1519,10 +2438,6 @@ class OrderApi:
 
         # process the path parameters
         # process the query parameters
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
-            
         if account_index is not None:
             
             _query_params.append(('account_index', account_index))
@@ -1534,6 +2449,30 @@ class OrderApi:
         if type is not None:
             
             _query_params.append(('type', type))
+            
+        if start_timestamp is not None:
+            
+            _query_params.append(('start_timestamp', start_timestamp))
+            
+        if end_timestamp is not None:
+            
+            _query_params.append(('end_timestamp', end_timestamp))
+            
+        if side is not None:
+            
+            _query_params.append(('side', side))
+            
+        if role is not None:
+            
+            _query_params.append(('role', role))
+            
+        if trade_type is not None:
+            
+            _query_params.append(('trade_type', trade_type))
+            
+        if aggregate is not None:
+            
+            _query_params.append(('aggregate', aggregate))
             
         # process the header parameters
         if authorization is not None:
@@ -1573,11 +2512,319 @@ class OrderApi:
 
 
 
-    @validate_call
+    async def export_historical_trades(
+        self,
+        l1_address: StrictStr,
+        var_date: Annotated[StrictStr, Field(description=" UTC day, YYYY-MM-DD")],
+        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> HistoricalTradesExportData:
+        """export_historicalTrades
+
+        Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+        :param l1_address: (required)
+        :type l1_address: str
+        :param var_date:  UTC day, YYYY-MM-DD (required)
+        :type var_date: str
+        :param authorization:  make required after integ is done
+        :type authorization: str
+        :param auth:  made optional to support header auth clients
+        :type auth: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._export_historical_trades_serialize(
+            l1_address=l1_address,
+            var_date=var_date,
+            authorization=authorization,
+            auth=auth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "HistoricalTradesExportData",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def export_historical_trades_with_http_info(
+        self,
+        l1_address: StrictStr,
+        var_date: Annotated[StrictStr, Field(description=" UTC day, YYYY-MM-DD")],
+        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[HistoricalTradesExportData]:
+        """export_historicalTrades
+
+        Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+        :param l1_address: (required)
+        :type l1_address: str
+        :param var_date:  UTC day, YYYY-MM-DD (required)
+        :type var_date: str
+        :param authorization:  make required after integ is done
+        :type authorization: str
+        :param auth:  made optional to support header auth clients
+        :type auth: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._export_historical_trades_serialize(
+            l1_address=l1_address,
+            var_date=var_date,
+            authorization=authorization,
+            auth=auth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "HistoricalTradesExportData",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def export_historical_trades_without_preload_content(
+        self,
+        l1_address: StrictStr,
+        var_date: Annotated[StrictStr, Field(description=" UTC day, YYYY-MM-DD")],
+        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """export_historicalTrades
+
+        Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+        :param l1_address: (required)
+        :type l1_address: str
+        :param var_date:  UTC day, YYYY-MM-DD (required)
+        :type var_date: str
+        :param authorization:  make required after integ is done
+        :type authorization: str
+        :param auth:  made optional to support header auth clients
+        :type auth: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._export_historical_trades_serialize(
+            l1_address=l1_address,
+            var_date=var_date,
+            authorization=authorization,
+            auth=auth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "HistoricalTradesExportData",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _export_historical_trades_serialize(
+        self,
+        l1_address,
+        var_date,
+        authorization,
+        auth,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if auth is not None:
+            
+            _query_params.append(('auth', auth))
+            
+        if l1_address is not None:
+            
+            _query_params.append(('l1_address', l1_address))
+            
+        if var_date is not None:
+            
+            _query_params.append(('date', var_date))
+            
+        # process the header parameters
+        if authorization is not None:
+            _header_params['authorization'] = authorization
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/export/historicalTrades',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
     async def order_book_details(
         self,
         market_id: Optional[StrictInt] = None,
-        filter: Optional[StrictStr] = None,
+        filter: Annotated[Optional[StrictStr], Field(description="Filter order books by type")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1597,7 +2844,7 @@ class OrderApi:
 
         :param market_id:
         :type market_id: int
-        :param filter:
+        :param filter: Filter order books by type
         :type filter: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1645,11 +2892,10 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def order_book_details_with_http_info(
         self,
         market_id: Optional[StrictInt] = None,
-        filter: Optional[StrictStr] = None,
+        filter: Annotated[Optional[StrictStr], Field(description="Filter order books by type")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1669,7 +2915,7 @@ class OrderApi:
 
         :param market_id:
         :type market_id: int
-        :param filter:
+        :param filter: Filter order books by type
         :type filter: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1717,11 +2963,10 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def order_book_details_without_preload_content(
         self,
         market_id: Optional[StrictInt] = None,
-        filter: Optional[StrictStr] = None,
+        filter: Annotated[Optional[StrictStr], Field(description="Filter order books by type")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1741,7 +2986,7 @@ class OrderApi:
 
         :param market_id:
         :type market_id: int
-        :param filter:
+        :param filter: Filter order books by type
         :type filter: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1853,7 +3098,6 @@ class OrderApi:
 
 
 
-    @validate_call
     async def order_book_orders(
         self,
         market_id: StrictInt,
@@ -1925,7 +3169,6 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def order_book_orders_with_http_info(
         self,
         market_id: StrictInt,
@@ -1997,7 +3240,6 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def order_book_orders_without_preload_content(
         self,
         market_id: StrictInt,
@@ -2133,7 +3375,6 @@ class OrderApi:
 
 
 
-    @validate_call
     async def order_books(
         self,
         market_id: Optional[StrictInt] = None,
@@ -2205,7 +3446,6 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def order_books_with_http_info(
         self,
         market_id: Optional[StrictInt] = None,
@@ -2277,7 +3517,6 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def order_books_without_preload_content(
         self,
         market_id: Optional[StrictInt] = None,
@@ -2413,7 +3652,6 @@ class OrderApi:
 
 
 
-    @validate_call
     async def recent_trades(
         self,
         market_id: StrictInt,
@@ -2485,7 +3723,6 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def recent_trades_with_http_info(
         self,
         market_id: StrictInt,
@@ -2557,7 +3794,6 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def recent_trades_without_preload_content(
         self,
         market_id: StrictInt,
@@ -2693,14 +3929,13 @@ class OrderApi:
 
 
 
-    @validate_call
     async def trades(
         self,
         sort_by: StrictStr,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
         authorization: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         market_id: Optional[StrictInt] = None,
+        market_type: Optional[StrictStr] = None,
         account_index: Optional[StrictInt] = None,
         order_index: Optional[StrictInt] = None,
         sort_dir: Optional[StrictStr] = None,
@@ -2710,6 +3945,10 @@ class OrderApi:
         role: Optional[StrictStr] = None,
         type: Optional[StrictStr] = None,
         aggregate: Optional[StrictBool] = None,
+        skip_ask_order_id: Optional[StrictStr] = None,
+        skip_bid_order_id: Optional[StrictStr] = None,
+        integrator_account_index: Optional[StrictInt] = None,
+        order_index_str: Annotated[Optional[StrictStr], Field(description=" takes precedence over order_index; for clients that cannot represent uint64 exactly")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2725,7 +3964,7 @@ class OrderApi:
     ) -> Trades:
         """trades
 
-        Get trades
+        Get trades for lighter accounts, including sub-accounts and public pools. `auth` is required for master accounts and sub accounts.
 
         :param sort_by: (required)
         :type sort_by: str
@@ -2733,10 +3972,10 @@ class OrderApi:
         :type limit: int
         :param authorization:
         :type authorization: str
-        :param auth:
-        :type auth: str
         :param market_id:
         :type market_id: int
+        :param market_type:
+        :type market_type: str
         :param account_index:
         :type account_index: int
         :param order_index:
@@ -2755,6 +3994,14 @@ class OrderApi:
         :type type: str
         :param aggregate:
         :type aggregate: bool
+        :param skip_ask_order_id:
+        :type skip_ask_order_id: str
+        :param skip_bid_order_id:
+        :type skip_bid_order_id: str
+        :param integrator_account_index:
+        :type integrator_account_index: int
+        :param order_index_str:  takes precedence over order_index; for clients that cannot represent uint64 exactly
+        :type order_index_str: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2781,8 +4028,8 @@ class OrderApi:
             sort_by=sort_by,
             limit=limit,
             authorization=authorization,
-            auth=auth,
             market_id=market_id,
+            market_type=market_type,
             account_index=account_index,
             order_index=order_index,
             sort_dir=sort_dir,
@@ -2792,6 +4039,10 @@ class OrderApi:
             role=role,
             type=type,
             aggregate=aggregate,
+            skip_ask_order_id=skip_ask_order_id,
+            skip_bid_order_id=skip_bid_order_id,
+            integrator_account_index=integrator_account_index,
+            order_index_str=order_index_str,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2813,14 +4064,13 @@ class OrderApi:
         ).data
 
 
-    @validate_call
     async def trades_with_http_info(
         self,
         sort_by: StrictStr,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
         authorization: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         market_id: Optional[StrictInt] = None,
+        market_type: Optional[StrictStr] = None,
         account_index: Optional[StrictInt] = None,
         order_index: Optional[StrictInt] = None,
         sort_dir: Optional[StrictStr] = None,
@@ -2830,6 +4080,10 @@ class OrderApi:
         role: Optional[StrictStr] = None,
         type: Optional[StrictStr] = None,
         aggregate: Optional[StrictBool] = None,
+        skip_ask_order_id: Optional[StrictStr] = None,
+        skip_bid_order_id: Optional[StrictStr] = None,
+        integrator_account_index: Optional[StrictInt] = None,
+        order_index_str: Annotated[Optional[StrictStr], Field(description=" takes precedence over order_index; for clients that cannot represent uint64 exactly")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2845,7 +4099,7 @@ class OrderApi:
     ) -> ApiResponse[Trades]:
         """trades
 
-        Get trades
+        Get trades for lighter accounts, including sub-accounts and public pools. `auth` is required for master accounts and sub accounts.
 
         :param sort_by: (required)
         :type sort_by: str
@@ -2853,10 +4107,10 @@ class OrderApi:
         :type limit: int
         :param authorization:
         :type authorization: str
-        :param auth:
-        :type auth: str
         :param market_id:
         :type market_id: int
+        :param market_type:
+        :type market_type: str
         :param account_index:
         :type account_index: int
         :param order_index:
@@ -2875,6 +4129,14 @@ class OrderApi:
         :type type: str
         :param aggregate:
         :type aggregate: bool
+        :param skip_ask_order_id:
+        :type skip_ask_order_id: str
+        :param skip_bid_order_id:
+        :type skip_bid_order_id: str
+        :param integrator_account_index:
+        :type integrator_account_index: int
+        :param order_index_str:  takes precedence over order_index; for clients that cannot represent uint64 exactly
+        :type order_index_str: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2901,8 +4163,8 @@ class OrderApi:
             sort_by=sort_by,
             limit=limit,
             authorization=authorization,
-            auth=auth,
             market_id=market_id,
+            market_type=market_type,
             account_index=account_index,
             order_index=order_index,
             sort_dir=sort_dir,
@@ -2912,6 +4174,10 @@ class OrderApi:
             role=role,
             type=type,
             aggregate=aggregate,
+            skip_ask_order_id=skip_ask_order_id,
+            skip_bid_order_id=skip_bid_order_id,
+            integrator_account_index=integrator_account_index,
+            order_index_str=order_index_str,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2933,14 +4199,13 @@ class OrderApi:
         )
 
 
-    @validate_call
     async def trades_without_preload_content(
         self,
         sort_by: StrictStr,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
         authorization: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         market_id: Optional[StrictInt] = None,
+        market_type: Optional[StrictStr] = None,
         account_index: Optional[StrictInt] = None,
         order_index: Optional[StrictInt] = None,
         sort_dir: Optional[StrictStr] = None,
@@ -2950,6 +4215,10 @@ class OrderApi:
         role: Optional[StrictStr] = None,
         type: Optional[StrictStr] = None,
         aggregate: Optional[StrictBool] = None,
+        skip_ask_order_id: Optional[StrictStr] = None,
+        skip_bid_order_id: Optional[StrictStr] = None,
+        integrator_account_index: Optional[StrictInt] = None,
+        order_index_str: Annotated[Optional[StrictStr], Field(description=" takes precedence over order_index; for clients that cannot represent uint64 exactly")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2965,7 +4234,7 @@ class OrderApi:
     ) -> RESTResponseType:
         """trades
 
-        Get trades
+        Get trades for lighter accounts, including sub-accounts and public pools. `auth` is required for master accounts and sub accounts.
 
         :param sort_by: (required)
         :type sort_by: str
@@ -2973,10 +4242,10 @@ class OrderApi:
         :type limit: int
         :param authorization:
         :type authorization: str
-        :param auth:
-        :type auth: str
         :param market_id:
         :type market_id: int
+        :param market_type:
+        :type market_type: str
         :param account_index:
         :type account_index: int
         :param order_index:
@@ -2995,6 +4264,14 @@ class OrderApi:
         :type type: str
         :param aggregate:
         :type aggregate: bool
+        :param skip_ask_order_id:
+        :type skip_ask_order_id: str
+        :param skip_bid_order_id:
+        :type skip_bid_order_id: str
+        :param integrator_account_index:
+        :type integrator_account_index: int
+        :param order_index_str:  takes precedence over order_index; for clients that cannot represent uint64 exactly
+        :type order_index_str: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3021,8 +4298,8 @@ class OrderApi:
             sort_by=sort_by,
             limit=limit,
             authorization=authorization,
-            auth=auth,
             market_id=market_id,
+            market_type=market_type,
             account_index=account_index,
             order_index=order_index,
             sort_dir=sort_dir,
@@ -3032,6 +4309,10 @@ class OrderApi:
             role=role,
             type=type,
             aggregate=aggregate,
+            skip_ask_order_id=skip_ask_order_id,
+            skip_bid_order_id=skip_bid_order_id,
+            integrator_account_index=integrator_account_index,
+            order_index_str=order_index_str,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3054,8 +4335,8 @@ class OrderApi:
         sort_by,
         limit,
         authorization,
-        auth,
         market_id,
+        market_type,
         account_index,
         order_index,
         sort_dir,
@@ -3065,6 +4346,10 @@ class OrderApi:
         role,
         type,
         aggregate,
+        skip_ask_order_id,
+        skip_bid_order_id,
+        integrator_account_index,
+        order_index_str,
         _request_auth,
         _content_type,
         _headers,
@@ -3085,13 +4370,13 @@ class OrderApi:
 
         # process the path parameters
         # process the query parameters
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
-            
         if market_id is not None:
             
             _query_params.append(('market_id', market_id))
+            
+        if market_type is not None:
+            
+            _query_params.append(('market_type', market_type))
             
         if account_index is not None:
             
@@ -3136,6 +4421,22 @@ class OrderApi:
         if aggregate is not None:
             
             _query_params.append(('aggregate', aggregate))
+            
+        if skip_ask_order_id is not None:
+            
+            _query_params.append(('skip_ask_order_id', skip_ask_order_id))
+            
+        if skip_bid_order_id is not None:
+            
+            _query_params.append(('skip_bid_order_id', skip_bid_order_id))
+            
+        if integrator_account_index is not None:
+            
+            _query_params.append(('integrator_account_index', integrator_account_index))
+            
+        if order_index_str is not None:
+            
+            _query_params.append(('order_index_str', order_index_str))
             
         # process the header parameters
         if authorization is not None:

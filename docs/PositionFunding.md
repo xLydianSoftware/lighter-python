@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **market_id** | **int** |  | 
 **funding_id** | **int** |  | 
 **change** | **str** |  | 
+**discount** | **str** |  | 
 **rate** | **str** |  | 
 **position_size** | **str** |  | 
 **position_side** | **str** |  | 

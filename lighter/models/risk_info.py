@@ -99,7 +99,7 @@ class RiskInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "cross_risk_parameters": RiskParameters.from_dict(obj["cross_risk_parameters"]) if obj.get("cross_risk_parameters") is not None else None,
             "isolated_risk_parameters": [RiskParameters.from_dict(_item) for _item in obj["isolated_risk_parameters"]] if obj.get("isolated_risk_parameters") is not None else None
         })

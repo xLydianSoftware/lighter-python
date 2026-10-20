@@ -10,19 +10,37 @@ Method | HTTP request | Description
 [**accounts_by_l1_address**](AccountApi.md#accounts_by_l1_address) | **GET** /api/v1/accountsByL1Address | accountsByL1Address
 [**apikeys**](AccountApi.md#apikeys) | **GET** /api/v1/apikeys | apikeys
 [**change_account_tier**](AccountApi.md#change_account_tier) | **POST** /api/v1/changeAccountTier | changeAccountTier
+[**fee_tiers**](AccountApi.md#fee_tiers) | **GET** /api/v1/feeTiers | feeTiers
+[**get_maker_only_api_keys**](AccountApi.md#get_maker_only_api_keys) | **GET** /api/v1/getMakerOnlyApiKeys | getMakerOnlyApiKeys
 [**l1_metadata**](AccountApi.md#l1_metadata) | **GET** /api/v1/l1Metadata | l1Metadata
+[**leaderboard**](AccountApi.md#leaderboard) | **GET** /api/v1/leaderboard | leaderboard
+[**lease_options**](AccountApi.md#lease_options) | **GET** /api/v1/leaseOptions | leaseOptions
+[**leases**](AccountApi.md#leases) | **GET** /api/v1/leases | leases
 [**liquidations**](AccountApi.md#liquidations) | **GET** /api/v1/liquidations | liquidations
+[**lit_lease**](AccountApi.md#lit_lease) | **POST** /api/v1/litLease | litLease
+[**partner_stats**](AccountApi.md#partner_stats) | **GET** /api/v1/partnerStats | partnerStats
 [**pnl**](AccountApi.md#pnl) | **GET** /api/v1/pnl | pnl
+[**pnl_leaderboard**](AccountApi.md#pnl_leaderboard) | **GET** /api/v1/pnlLeaderboard | pnlLeaderboard
 [**position_funding**](AccountApi.md#position_funding) | **GET** /api/v1/positionFunding | positionFunding
 [**public_pools_metadata**](AccountApi.md#public_pools_metadata) | **GET** /api/v1/publicPoolsMetadata | publicPoolsMetadata
+[**referral_user_referrals**](AccountApi.md#referral_user_referrals) | **GET** /api/v1/referral/userReferrals | userReferrals
+[**rfq_create**](AccountApi.md#rfq_create) | **POST** /api/v1/rfq/create | rfq_create
+[**rfq_get**](AccountApi.md#rfq_get) | **GET** /api/v1/rfq/get | rfq_get
+[**rfq_list**](AccountApi.md#rfq_list) | **GET** /api/v1/rfq/list | rfq_list
+[**rfq_respond**](AccountApi.md#rfq_respond) | **POST** /api/v1/rfq/respond | rfq_respond
+[**rfq_update**](AccountApi.md#rfq_update) | **POST** /api/v1/rfq/update | rfq_update
+[**set_maker_only_api_keys**](AccountApi.md#set_maker_only_api_keys) | **POST** /api/v1/setMakerOnlyApiKeys | setMakerOnlyApiKeys
+[**tokens**](AccountApi.md#tokens) | **GET** /api/v1/tokens | tokens
+[**tokens_create**](AccountApi.md#tokens_create) | **POST** /api/v1/tokens/create | tokens_create
+[**tokens_revoke**](AccountApi.md#tokens_revoke) | **POST** /api/v1/tokens/revoke | tokens_revoke
 
 
 # **account**
-> DetailedAccounts account(by, value)
+> DetailedAccounts account(by, value, active_only=active_only, cursor=cursor)
 
 account
 
-Get account by account's index. <br>More details about account index: [Account Index](https://apidocs.lighter.xyz/docs/account-index)<hr>**Response Description:**<br><br>1) **Status:** 1 is active 0 is inactive.<br>2) **Collateral:** The amount of collateral in the account.<hr>**Position Details Description:**<br>1) **OOC:** Open order count in that market.<br>2) **Sign:** 1 for Long, -1 for Short.<br>3) **Position:** The amount of position in that market.<br>4) **Avg Entry Price:** The average entry price of the position.<br>5) **Position Value:** The value of the position.<br>6) **Unrealized PnL:** The unrealized profit and loss of the position.<br>7) **Realized PnL:** The realized profit and loss of the position.
+Get account by an account's index, or L1 address
 
 ### Example
 
@@ -46,10 +64,12 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.AccountApi(api_client)
     by = 'by_example' # str | 
     value = 'value_example' # str | 
+    active_only = False # bool | Hide markets for which leverage and margin settings are present (meaning the account traded it at least once), but with no active position. (optional) (default to False)
+    cursor = 'cursor_example' # str |  (optional)
 
     try:
         # account
-        api_response = await api_instance.account(by, value)
+        api_response = await api_instance.account(by, value, active_only=active_only, cursor=cursor)
         print("The response of AccountApi->account:\n")
         pprint(api_response)
     except Exception as e:
@@ -65,6 +85,8 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **by** | **str**|  | 
  **value** | **str**|  | 
+ **active_only** | **bool**| Hide markets for which leverage and margin settings are present (meaning the account traded it at least once), but with no active position. | [optional] [default to False]
+ **cursor** | **str**|  | [optional] 
 
 ### Return type
 
@@ -89,11 +111,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **account_limits**
-> AccountLimits account_limits(account_index, authorization=authorization, auth=auth)
+> AccountLimits account_limits(account_index, authorization)
 
 accountLimits
 
-Get account limits
+Get account limits. For more details on account types, see this page: https://apidocs.lighter.xyz/docs/account-types
 
 ### Example
 
@@ -116,12 +138,11 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.AccountApi(api_client)
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str | 
 
     try:
         # accountLimits
-        api_response = await api_instance.account_limits(account_index, authorization=authorization, auth=auth)
+        api_response = await api_instance.account_limits(account_index, authorization)
         print("The response of AccountApi->account_limits:\n")
         pprint(api_response)
     except Exception as e:
@@ -136,8 +157,7 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | 
 
 ### Return type
 
@@ -162,7 +182,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **account_metadata**
-> AccountMetadatas account_metadata(by, value, authorization=authorization, auth=auth)
+> AccountMetadatas account_metadata(by, value, authorization=authorization, cursor=cursor)
 
 accountMetadata
 
@@ -191,11 +211,11 @@ async with lighter.ApiClient(configuration) as api_client:
     by = 'by_example' # str | 
     value = 'value_example' # str | 
     authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
+    cursor = 'cursor_example' # str |  (optional)
 
     try:
         # accountMetadata
-        api_response = await api_instance.account_metadata(by, value, authorization=authorization, auth=auth)
+        api_response = await api_instance.account_metadata(by, value, authorization=authorization, cursor=cursor)
         print("The response of AccountApi->account_metadata:\n")
         pprint(api_response)
     except Exception as e:
@@ -212,7 +232,7 @@ Name | Type | Description  | Notes
  **by** | **str**|  | 
  **value** | **str**|  | 
  **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
+ **cursor** | **str**|  | [optional] 
 
 ### Return type
 
@@ -237,11 +257,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **accounts_by_l1_address**
-> SubAccounts accounts_by_l1_address(l1_address)
+> SubAccounts accounts_by_l1_address(l1_address, cursor=cursor)
 
 accountsByL1Address
 
-Get accounts by l1_address returns all accounts associated with the given L1 address
+Returns all accounts associated with the given L1 address
 
 ### Example
 
@@ -264,10 +284,11 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.AccountApi(api_client)
     l1_address = 'l1_address_example' # str | 
+    cursor = 'cursor_example' # str |  (optional)
 
     try:
         # accountsByL1Address
-        api_response = await api_instance.accounts_by_l1_address(l1_address)
+        api_response = await api_instance.accounts_by_l1_address(l1_address, cursor=cursor)
         print("The response of AccountApi->accounts_by_l1_address:\n")
         pprint(api_response)
     except Exception as e:
@@ -282,6 +303,7 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **l1_address** | **str**|  | 
+ **cursor** | **str**|  | [optional] 
 
 ### Return type
 
@@ -333,7 +355,7 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.AccountApi(api_client)
     account_index = 56 # int | 
-    api_key_index = 255 # int |  (optional) (default to 255)
+    api_key_index = 56 # int |  (optional)
 
     try:
         # apikeys
@@ -352,7 +374,7 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
- **api_key_index** | **int**|  | [optional] [default to 255]
+ **api_key_index** | **int**|  | [optional] 
 
 ### Return type
 
@@ -377,11 +399,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **change_account_tier**
-> RespChangeAccountTier change_account_tier(account_index, new_tier, authorization=authorization, auth=auth)
+> RespChangeAccountTier change_account_tier(account_index, new_tier, authorization=authorization)
 
 changeAccountTier
 
-Change account tier
+Change account tier. You can only perform this action once every 24 hours.
 
 ### Example
 
@@ -405,12 +427,11 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.AccountApi(api_client)
     account_index = 56 # int | 
     new_tier = 'new_tier_example' # str | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # changeAccountTier
-        api_response = await api_instance.change_account_tier(account_index, new_tier, authorization=authorization, auth=auth)
+        api_response = await api_instance.change_account_tier(account_index, new_tier, authorization=authorization)
         print("The response of AccountApi->change_account_tier:\n")
         pprint(api_response)
     except Exception as e:
@@ -426,8 +447,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
  **new_tier** | **str**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 
@@ -439,7 +459,147 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: multipart/form-data
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **fee_tiers**
+> FeeTiers fee_tiers(filter=filter)
+
+feeTiers
+
+Get fee tiers. filter=perps|spot returns the regular user tiers (both market types share them). filter=bo returns BO volume tiers and LIT staking discount tiers; filter=all returns everything. An account's BO multiplier is the BO tier fee_rate times the staking fee_rate, applied to each BO market's maker/taker fee (see /api/v1/events) and then scaled by 1 - trade_price / settlement_cap.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.fee_tiers import FeeTiers
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    filter = all # str |  (optional) (default to all)
+
+    try:
+        # feeTiers
+        api_response = await api_instance.fee_tiers(filter=filter)
+        print("The response of AccountApi->fee_tiers:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->fee_tiers: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **filter** | **str**|  | [optional] [default to all]
+
+### Return type
+
+[**FeeTiers**](FeeTiers.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **get_maker_only_api_keys**
+> RespGetMakerOnlyApiKeys get_maker_only_api_keys(authorization, account_index)
+
+getMakerOnlyApiKeys
+
+Get maker-only API key indexes
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_maker_only_api_keys import RespGetMakerOnlyApiKeys
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    account_index = 56 # int | 
+
+    try:
+        # getMakerOnlyApiKeys
+        api_response = await api_instance.get_maker_only_api_keys(authorization, account_index)
+        print("The response of AccountApi->get_maker_only_api_keys:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->get_maker_only_api_keys: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **account_index** | **int**|  | 
+
+### Return type
+
+[**RespGetMakerOnlyApiKeys**](RespGetMakerOnlyApiKeys.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 ### HTTP response details
@@ -452,7 +612,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **l1_metadata**
-> L1Metadata l1_metadata(l1_address, authorization=authorization, auth=auth)
+> L1Metadata l1_metadata(authorization, l1_address)
 
 l1Metadata
 
@@ -478,13 +638,12 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
     l1_address = 'l1_address_example' # str | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
 
     try:
         # l1Metadata
-        api_response = await api_instance.l1_metadata(l1_address, authorization=authorization, auth=auth)
+        api_response = await api_instance.l1_metadata(authorization, l1_address)
         print("The response of AccountApi->l1_metadata:\n")
         pprint(api_response)
     except Exception as e:
@@ -498,9 +657,8 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **l1_address** | **str**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
 
 ### Return type
 
@@ -524,8 +682,225 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **leaderboard**
+> Leaderboard leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id, auth=auth)
+
+leaderboard
+
+Get points leaderboard
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.leaderboard import Leaderboard
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    type = 'type_example' # str | 
+    authorization = 'authorization_example' # str |  (optional)
+    l1_address = 'l1_address_example' # str |  (optional)
+    competition_id = 'competition_id_example' # str |  (optional)
+    auth = 'auth_example' # str |  (optional)
+
+    try:
+        # leaderboard
+        api_response = await api_instance.leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id, auth=auth)
+        print("The response of AccountApi->leaderboard:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->leaderboard: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **type** | **str**|  | 
+ **authorization** | **str**|  | [optional] 
+ **l1_address** | **str**|  | [optional] 
+ **competition_id** | **str**|  | [optional] 
+ **auth** | **str**|  | [optional] 
+
+### Return type
+
+[**Leaderboard**](Leaderboard.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **lease_options**
+> RespGetLeaseOptions lease_options()
+
+leaseOptions
+
+Returns available lease duration/rate tiers, sorted by duration descending.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_lease_options import RespGetLeaseOptions
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+
+    try:
+        # leaseOptions
+        api_response = await api_instance.lease_options()
+        print("The response of AccountApi->lease_options:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->lease_options: %s\n" % e)
+```
+
+
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**RespGetLeaseOptions**](RespGetLeaseOptions.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **leases**
+> RespGetLeases leases(account_index, authorization=authorization, cursor=cursor, limit=limit)
+
+leases
+
+Returns paginated lease entries for an account, most recent first. Supports read-only auth via signature/account_index/timestamp query params.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_leases import RespGetLeases
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    account_index = 56 # int | Account index to fetch leases for
+    authorization = 'authorization_example' # str | API token authorization (optional)
+    cursor = 'cursor_example' # str | Pagination cursor from a previous response (optional)
+    limit = 20 # int | Number of results to return (1–100, default 20) (optional) (default to 20)
+
+    try:
+        # leases
+        api_response = await api_instance.leases(account_index, authorization=authorization, cursor=cursor, limit=limit)
+        print("The response of AccountApi->leases:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->leases: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**| Account index to fetch leases for | 
+ **authorization** | **str**| API token authorization | [optional] 
+ **cursor** | **str**| Pagination cursor from a previous response | [optional] 
+ **limit** | **int**| Number of results to return (1–100, default 20) | [optional] [default to 20]
+
+### Return type
+
+[**RespGetLeases**](RespGetLeases.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **liquidations**
-> LiquidationInfos liquidations(account_index, limit, authorization=authorization, auth=auth, market_id=market_id, cursor=cursor)
+> LiquidationInfos liquidations(authorization, account_index, limit, market_id=market_id, cursor=cursor)
 
 liquidations
 
@@ -551,16 +926,15 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
     account_index = 56 # int | 
     limit = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
-    market_id = 255 # int |  (optional) (default to 255)
+    market_id = 56 # int |  (optional)
     cursor = 'cursor_example' # str |  (optional)
 
     try:
         # liquidations
-        api_response = await api_instance.liquidations(account_index, limit, authorization=authorization, auth=auth, market_id=market_id, cursor=cursor)
+        api_response = await api_instance.liquidations(authorization, account_index, limit, market_id=market_id, cursor=cursor)
         print("The response of AccountApi->liquidations:\n")
         pprint(api_response)
     except Exception as e:
@@ -574,11 +948,10 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **account_index** | **int**|  | 
  **limit** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
- **market_id** | **int**|  | [optional] [default to 255]
+ **market_id** | **int**|  | [optional] 
  **cursor** | **str**|  | [optional] 
 
 ### Return type
@@ -603,8 +976,158 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **lit_lease**
+> TxHash lit_lease(tx_info, lease_amount, duration_days, authorization=authorization)
+
+litLease
+
+Submit a LIT lease transfer. The server calculates the required fee based on lease_amount and duration_days, then executes the transfer. Fee formula (integer arithmetic): fee = lease_amount × (annual_rate × 100) × duration_days / (360 × 10000).
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.tx_hash import TxHash
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    tx_info = 'tx_info_example' # str | Signed transaction info (JSON with L2 signature, L1 signature, etc.)
+    lease_amount = 'lease_amount_example' # str | Amount of LIT to lease in raw units (1 LIT = 100000000)
+    duration_days = 56 # int | Lease duration in days. Must match one of the available lease options.
+    authorization = 'authorization_example' # str | API token authorization (optional)
+
+    try:
+        # litLease
+        api_response = await api_instance.lit_lease(tx_info, lease_amount, duration_days, authorization=authorization)
+        print("The response of AccountApi->lit_lease:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->lit_lease: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **tx_info** | **str**| Signed transaction info (JSON with L2 signature, L1 signature, etc.) | 
+ **lease_amount** | **str**| Amount of LIT to lease in raw units (1 LIT &#x3D; 100000000) | 
+ **duration_days** | **int**| Lease duration in days. Must match one of the available lease options. | 
+ **authorization** | **str**| API token authorization | [optional] 
+
+### Return type
+
+[**TxHash**](TxHash.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **partner_stats**
+> PartnerStats partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp, period=period)
+
+partnerStats
+
+Get partner stats. If timestamps are not provided, all-time stats will be returned.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.partner_stats import PartnerStats
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    account_index = 56 # int | 
+    start_timestamp = 56 # int |  (optional)
+    end_timestamp = 56 # int |  (optional)
+    period = 'period_example' # str |  (optional)
+
+    try:
+        # partnerStats
+        api_response = await api_instance.partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp, period=period)
+        print("The response of AccountApi->partner_stats:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->partner_stats: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **start_timestamp** | **int**|  | [optional] 
+ **end_timestamp** | **int**|  | [optional] 
+ **period** | **str**|  | [optional] 
+
+### Return type
+
+[**PartnerStats**](PartnerStats.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **pnl**
-> AccountPnL pnl(by, value, resolution, start_timestamp, end_timestamp, count_back, authorization=authorization, auth=auth, ignore_transfers=ignore_transfers)
+> AccountPnL pnl(by, value, resolution, start_timestamp, end_timestamp, count_back, authorization=authorization, ignore_transfers=ignore_transfers)
 
 pnl
 
@@ -637,12 +1160,11 @@ async with lighter.ApiClient(configuration) as api_client:
     end_timestamp = 56 # int | 
     count_back = 56 # int | 
     authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
     ignore_transfers = False # bool |  (optional) (default to False)
 
     try:
         # pnl
-        api_response = await api_instance.pnl(by, value, resolution, start_timestamp, end_timestamp, count_back, authorization=authorization, auth=auth, ignore_transfers=ignore_transfers)
+        api_response = await api_instance.pnl(by, value, resolution, start_timestamp, end_timestamp, count_back, authorization=authorization, ignore_transfers=ignore_transfers)
         print("The response of AccountApi->pnl:\n")
         pprint(api_response)
     except Exception as e:
@@ -663,7 +1185,6 @@ Name | Type | Description  | Notes
  **end_timestamp** | **int**|  | 
  **count_back** | **int**|  | 
  **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
  **ignore_transfers** | **bool**|  | [optional] [default to False]
 
 ### Return type
@@ -688,8 +1209,87 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **pnl_leaderboard**
+> PnlLeaderboard pnl_leaderboard(time_window, sort_by, sort_dir, limit, offset, search=search)
+
+pnlLeaderboard
+
+Get pnl leaderboard
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.pnl_leaderboard import PnlLeaderboard
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    time_window = all # str |  (default to all)
+    sort_by = pnl # str |  (default to pnl)
+    sort_dir = desc # str |  (default to desc)
+    limit = 56 # int | 
+    offset = 56 # int | 
+    search = 'search_example' # str |  (optional)
+
+    try:
+        # pnlLeaderboard
+        api_response = await api_instance.pnl_leaderboard(time_window, sort_by, sort_dir, limit, offset, search=search)
+        print("The response of AccountApi->pnl_leaderboard:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->pnl_leaderboard: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **time_window** | **str**|  | [default to all]
+ **sort_by** | **str**|  | [default to pnl]
+ **sort_dir** | **str**|  | [default to desc]
+ **limit** | **int**|  | 
+ **offset** | **int**|  | 
+ **search** | **str**|  | [optional] 
+
+### Return type
+
+[**PnlLeaderboard**](PnlLeaderboard.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **position_funding**
-> PositionFundings position_funding(account_index, limit, authorization=authorization, auth=auth, market_id=market_id, cursor=cursor, side=side)
+> PositionFundings position_funding(account_index, limit, authorization=authorization, cursor=cursor, side=side, start_timestamp=start_timestamp, end_timestamp=end_timestamp, market_ids=market_ids)
 
 positionFunding
 
@@ -718,14 +1318,15 @@ async with lighter.ApiClient(configuration) as api_client:
     account_index = 56 # int | 
     limit = 56 # int | 
     authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
-    market_id = 255 # int |  (optional) (default to 255)
     cursor = 'cursor_example' # str |  (optional)
     side = all # str |  (optional) (default to all)
+    start_timestamp = 56 # int |  (optional)
+    end_timestamp = 56 # int |  (optional)
+    market_ids = [56] # List[int] | comma-separated int64s, e.g. \"1,2\" (optional)
 
     try:
         # positionFunding
-        api_response = await api_instance.position_funding(account_index, limit, authorization=authorization, auth=auth, market_id=market_id, cursor=cursor, side=side)
+        api_response = await api_instance.position_funding(account_index, limit, authorization=authorization, cursor=cursor, side=side, start_timestamp=start_timestamp, end_timestamp=end_timestamp, market_ids=market_ids)
         print("The response of AccountApi->position_funding:\n")
         pprint(api_response)
     except Exception as e:
@@ -742,10 +1343,11 @@ Name | Type | Description  | Notes
  **account_index** | **int**|  | 
  **limit** | **int**|  | 
  **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
- **market_id** | **int**|  | [optional] [default to 255]
  **cursor** | **str**|  | [optional] 
  **side** | **str**|  | [optional] [default to all]
+ **start_timestamp** | **int**|  | [optional] 
+ **end_timestamp** | **int**|  | [optional] 
+ **market_ids** | [**List[int]**](int.md)| comma-separated int64s, e.g. \&quot;1,2\&quot; | [optional] 
 
 ### Return type
 
@@ -770,11 +1372,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **public_pools_metadata**
-> RespPublicPoolsMetadata public_pools_metadata(index, limit, authorization=authorization, auth=auth, filter=filter, account_index=account_index)
+> RespPublicPoolsMetadata public_pools_metadata(index, limit, authorization=authorization, filter=filter, account_index=account_index)
 
 publicPoolsMetadata
 
-Get public pools metadata
+Get public pools metadata. `auth` is required in case you specify an account_index. You will see public pools with an index that starts an n-1 of the one you specify. To see staking pools, use `filter=stake`
 
 ### Example
 
@@ -799,13 +1401,12 @@ async with lighter.ApiClient(configuration) as api_client:
     index = 56 # int | 
     limit = 56 # int | 
     authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
     filter = 'filter_example' # str |  (optional)
     account_index = 56 # int |  (optional)
 
     try:
         # publicPoolsMetadata
-        api_response = await api_instance.public_pools_metadata(index, limit, authorization=authorization, auth=auth, filter=filter, account_index=account_index)
+        api_response = await api_instance.public_pools_metadata(index, limit, authorization=authorization, filter=filter, account_index=account_index)
         print("The response of AccountApi->public_pools_metadata:\n")
         pprint(api_response)
     except Exception as e:
@@ -822,7 +1423,6 @@ Name | Type | Description  | Notes
  **index** | **int**|  | 
  **limit** | **int**|  | 
  **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
  **filter** | **str**|  | [optional] 
  **account_index** | **int**|  | [optional] 
 
@@ -837,6 +1437,756 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **referral_user_referrals**
+> UserReferrals referral_user_referrals(l1_address, authorization=authorization, cursor=cursor, stats_start_timestamp=stats_start_timestamp, stats_end_timestamp=stats_end_timestamp, limit=limit, is_eligible=is_eligible)
+
+userReferrals
+
+Get user referrals
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.user_referrals import UserReferrals
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    l1_address = 'l1_address_example' # str | 
+    authorization = 'authorization_example' # str |  (optional)
+    cursor = 'cursor_example' # str |  (optional)
+    stats_start_timestamp = 56 # int |  (optional)
+    stats_end_timestamp = 56 # int |  (optional)
+    limit = 56 # int |  (optional)
+    is_eligible = False # bool |  (optional) (default to False)
+
+    try:
+        # userReferrals
+        api_response = await api_instance.referral_user_referrals(l1_address, authorization=authorization, cursor=cursor, stats_start_timestamp=stats_start_timestamp, stats_end_timestamp=stats_end_timestamp, limit=limit, is_eligible=is_eligible)
+        print("The response of AccountApi->referral_user_referrals:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->referral_user_referrals: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **l1_address** | **str**|  | 
+ **authorization** | **str**|  | [optional] 
+ **cursor** | **str**|  | [optional] 
+ **stats_start_timestamp** | **int**|  | [optional] 
+ **stats_end_timestamp** | **int**|  | [optional] 
+ **limit** | **int**|  | [optional] 
+ **is_eligible** | **bool**|  | [optional] [default to False]
+
+### Return type
+
+[**UserReferrals**](UserReferrals.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_create**
+> RespCreateRFQ rfq_create(authorization, market_index, direction, base_amount=base_amount, quote_amount=quote_amount, metadata=metadata)
+
+rfq_create
+
+Create RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_create_rfq import RespCreateRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    market_index = 56 # int | 
+    direction = 56 # int | 
+    base_amount = 'base_amount_example' # str |  (optional)
+    quote_amount = 'quote_amount_example' # str |  (optional)
+    metadata = 'metadata_example' # str |  (optional)
+
+    try:
+        # rfq_create
+        api_response = await api_instance.rfq_create(authorization, market_index, direction, base_amount=base_amount, quote_amount=quote_amount, metadata=metadata)
+        print("The response of AccountApi->rfq_create:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_create: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **market_index** | **int**|  | 
+ **direction** | **int**|  | 
+ **base_amount** | **str**|  | [optional] 
+ **quote_amount** | **str**|  | [optional] 
+ **metadata** | **str**|  | [optional] 
+
+### Return type
+
+[**RespCreateRFQ**](RespCreateRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_get**
+> RespGetRFQ rfq_get(authorization, rfq_id)
+
+rfq_get
+
+Get RFQ by ID
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_rfq import RespGetRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    rfq_id = 56 # int | 
+
+    try:
+        # rfq_get
+        api_response = await api_instance.rfq_get(authorization, rfq_id)
+        print("The response of AccountApi->rfq_get:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_get: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **rfq_id** | **int**|  | 
+
+### Return type
+
+[**RespGetRFQ**](RespGetRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_list**
+> RespListRFQs rfq_list(authorization, account_index=account_index, status=status, cursor=cursor, limit=limit)
+
+rfq_list
+
+List RFQs
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_list_rfqs import RespListRFQs
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    account_index = 56 # int |  (optional)
+    status = 'status_example' # str |  (optional)
+    cursor = 'cursor_example' # str |  (optional)
+    limit = 56 # int |  (optional)
+
+    try:
+        # rfq_list
+        api_response = await api_instance.rfq_list(authorization, account_index=account_index, status=status, cursor=cursor, limit=limit)
+        print("The response of AccountApi->rfq_list:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_list: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **account_index** | **int**|  | [optional] 
+ **status** | **str**|  | [optional] 
+ **cursor** | **str**|  | [optional] 
+ **limit** | **int**|  | [optional] 
+
+### Return type
+
+[**RespListRFQs**](RespListRFQs.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_respond**
+> RespRespondToRFQ rfq_respond(authorization, rfq_id, status)
+
+rfq_respond
+
+Respond to RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_respond_to_rfq import RespRespondToRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    rfq_id = 56 # int | 
+    status = 'status_example' # str | 
+
+    try:
+        # rfq_respond
+        api_response = await api_instance.rfq_respond(authorization, rfq_id, status)
+        print("The response of AccountApi->rfq_respond:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_respond: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **rfq_id** | **int**|  | 
+ **status** | **str**|  | 
+
+### Return type
+
+[**RespRespondToRFQ**](RespRespondToRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_update**
+> RespUpdateRFQ rfq_update(authorization, rfq_id, status)
+
+rfq_update
+
+Update RFQ status
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_update_rfq import RespUpdateRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    rfq_id = 56 # int | 
+    status = 'status_example' # str | 
+
+    try:
+        # rfq_update
+        api_response = await api_instance.rfq_update(authorization, rfq_id, status)
+        print("The response of AccountApi->rfq_update:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_update: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **rfq_id** | **int**|  | 
+ **status** | **str**|  | 
+
+### Return type
+
+[**RespUpdateRFQ**](RespUpdateRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **set_maker_only_api_keys**
+> RespSetMakerOnlyApiKeys set_maker_only_api_keys(authorization, account_index, api_key_indexes)
+
+setMakerOnlyApiKeys
+
+Set maker-only API key indexes. This replaces the current list; pass all indexes you want marked as maker-only. Pass [] to clear all maker-only restrictions.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_set_maker_only_api_keys import RespSetMakerOnlyApiKeys
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    account_index = 56 # int | 
+    api_key_indexes = 'api_key_indexes_example' # str | JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions.
+
+    try:
+        # setMakerOnlyApiKeys
+        api_response = await api_instance.set_maker_only_api_keys(authorization, account_index, api_key_indexes)
+        print("The response of AccountApi->set_maker_only_api_keys:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->set_maker_only_api_keys: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **account_index** | **int**|  | 
+ **api_key_indexes** | **str**| JSON array string of API key indexes, e.g. \\\&quot;[4,5]\\\&quot;. Use [] to clear all maker-only restrictions. | 
+
+### Return type
+
+[**RespSetMakerOnlyApiKeys**](RespSetMakerOnlyApiKeys.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded, multipart/form-data
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **tokens**
+> RespGetApiTokens tokens(account_index, authorization=authorization)
+
+tokens
+
+Get read only auth tokens for an account
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_api_tokens import RespGetApiTokens
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    account_index = 56 # int | 
+    authorization = 'authorization_example' # str |  (optional)
+
+    try:
+        # tokens
+        api_response = await api_instance.tokens(account_index, authorization=authorization)
+        print("The response of AccountApi->tokens:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->tokens: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **authorization** | **str**|  | [optional] 
+
+### Return type
+
+[**RespGetApiTokens**](RespGetApiTokens.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **tokens_create**
+> RespPostApiToken tokens_create(name, account_index, expiry, sub_account_access, authorization=authorization, scopes=scopes)
+
+tokens_create
+
+Create an API token for read-only access
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_post_api_token import RespPostApiToken
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    name = 'name_example' # str | 
+    account_index = 56 # int | 
+    expiry = 56 # int | 
+    sub_account_access = True # bool | 
+    authorization = 'authorization_example' # str |  (optional)
+    scopes = 'read.*' # str |  (optional) (default to 'read.*')
+
+    try:
+        # tokens_create
+        api_response = await api_instance.tokens_create(name, account_index, expiry, sub_account_access, authorization=authorization, scopes=scopes)
+        print("The response of AccountApi->tokens_create:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->tokens_create: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **name** | **str**|  | 
+ **account_index** | **int**|  | 
+ **expiry** | **int**|  | 
+ **sub_account_access** | **bool**|  | 
+ **authorization** | **str**|  | [optional] 
+ **scopes** | **str**|  | [optional] [default to &#39;read.*&#39;]
+
+### Return type
+
+[**RespPostApiToken**](RespPostApiToken.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **tokens_revoke**
+> RespRevokeApiToken tokens_revoke(token_id, account_index, authorization=authorization)
+
+tokens_revoke
+
+Revoke read only auth token for an account
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_revoke_api_token import RespRevokeApiToken
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    token_id = 56 # int | 
+    account_index = 56 # int | 
+    authorization = 'authorization_example' # str |  (optional)
+
+    try:
+        # tokens_revoke
+        api_response = await api_instance.tokens_revoke(token_id, account_index, authorization=authorization)
+        print("The response of AccountApi->tokens_revoke:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->tokens_revoke: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **token_id** | **int**|  | 
+ **account_index** | **int**|  | 
+ **authorization** | **str**|  | [optional] 
+
+### Return type
+
+[**RespRevokeApiToken**](RespRevokeApiToken.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
  - **Accept**: application/json
 
 ### HTTP response details

@@ -45,10 +45,11 @@ class EnrichedTx(BaseModel):
     sequence_index: StrictInt
     parent_hash: StrictStr
     api_key_index: StrictInt
+    transaction_time: StrictInt
     committed_at: StrictInt
     verified_at: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "hash", "type", "info", "event_info", "status", "transaction_index", "l1_address", "account_index", "nonce", "expire_at", "block_height", "queued_at", "executed_at", "sequence_index", "parent_hash", "api_key_index", "committed_at", "verified_at"]
+    __properties: ClassVar[List[str]] = ["code", "message", "hash", "type", "info", "event_info", "status", "transaction_index", "l1_address", "account_index", "nonce", "expire_at", "block_height", "queued_at", "executed_at", "sequence_index", "parent_hash", "api_key_index", "transaction_time", "committed_at", "verified_at"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -107,7 +108,7 @@ class EnrichedTx(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "hash": obj.get("hash"),
@@ -126,6 +127,7 @@ class EnrichedTx(BaseModel):
             "sequence_index": obj.get("sequence_index"),
             "parent_hash": obj.get("parent_hash"),
             "api_key_index": obj.get("api_key_index"),
+            "transaction_time": obj.get("transaction_time"),
             "committed_at": obj.get("committed_at"),
             "verified_at": obj.get("verified_at")
         })

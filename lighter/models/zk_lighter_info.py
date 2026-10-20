@@ -87,7 +87,7 @@ class ZkLighterInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "contract_address": obj.get("contract_address")
         })
         # store additional fields in additional_properties

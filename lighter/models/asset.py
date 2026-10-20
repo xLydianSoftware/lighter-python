@@ -35,14 +35,23 @@ class Asset(BaseModel):
     margin_mode: StrictStr
     index_price: StrictStr
     l1_address: StrictStr
+    global_supply_cap: StrictStr
+    liquidation_fee: StrictStr
+    liquidation_threshold: StrictStr
+    loan_to_value: StrictStr
+    price_decimals: StrictInt
+    total_supplied: StrictStr
+    user_supply_cap: StrictStr
+    liquidation_factor: StrictStr
+    multiplier: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address"]
+    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address", "global_supply_cap", "liquidation_fee", "liquidation_threshold", "loan_to_value", "price_decimals", "total_supplied", "user_supply_cap", "liquidation_factor", "multiplier"]
 
     @field_validator('margin_mode')
     def margin_mode_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['enabled', 'disabled']):
-            raise ValueError("must be one of enum values ('enabled', 'disabled')")
+        if value not in set(['enabled', 'disabled', 'priced_only']):
+            raise ValueError("must be one of enum values ('enabled', 'disabled', 'priced_only')")
         return value
 
     model_config = ConfigDict(
@@ -102,7 +111,7 @@ class Asset(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "asset_id": obj.get("asset_id"),
             "symbol": obj.get("symbol"),
             "l1_decimals": obj.get("l1_decimals"),
@@ -111,7 +120,16 @@ class Asset(BaseModel):
             "min_withdrawal_amount": obj.get("min_withdrawal_amount"),
             "margin_mode": obj.get("margin_mode"),
             "index_price": obj.get("index_price"),
-            "l1_address": obj.get("l1_address")
+            "l1_address": obj.get("l1_address"),
+            "global_supply_cap": obj.get("global_supply_cap"),
+            "liquidation_fee": obj.get("liquidation_fee"),
+            "liquidation_threshold": obj.get("liquidation_threshold"),
+            "loan_to_value": obj.get("loan_to_value"),
+            "price_decimals": obj.get("price_decimals"),
+            "total_supplied": obj.get("total_supplied"),
+            "user_supply_cap": obj.get("user_supply_cap"),
+            "liquidation_factor": obj.get("liquidation_factor"),
+            "multiplier": obj.get("multiplier")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

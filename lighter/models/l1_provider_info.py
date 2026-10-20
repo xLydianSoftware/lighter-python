@@ -89,7 +89,7 @@ class L1ProviderInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "chainId": obj.get("chainId"),
             "networkId": obj.get("networkId"),
             "latestBlockNumber": obj.get("latestBlockNumber")

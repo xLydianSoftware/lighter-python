@@ -98,7 +98,7 @@ class PositionFundings(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "position_fundings": [PositionFunding.from_dict(_item) for _item in obj["position_fundings"]] if obj.get("position_fundings") is not None else None,

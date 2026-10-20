@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -29,16 +29,19 @@ class Account(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     account_type: StrictInt
+    account_trading_mode: StrictInt = Field(description="Classic=0 and Unified=1")
     index: StrictInt
     l1_address: StrictStr
     cancel_all_time: StrictInt
     total_order_count: StrictInt
+    total_isolated_order_count: StrictInt
     pending_order_count: StrictInt
-    available_balance: Optional[StrictStr]
+    available_balance: StrictStr
     status: StrictInt
     collateral: StrictStr
+    transaction_time: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "pending_order_count", "available_balance", "status", "collateral"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "transaction_time"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -97,18 +100,21 @@ class Account(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "account_type": obj.get("account_type"),
+            "account_trading_mode": obj.get("account_trading_mode"),
             "index": obj.get("index"),
             "l1_address": obj.get("l1_address"),
             "cancel_all_time": obj.get("cancel_all_time"),
             "total_order_count": obj.get("total_order_count"),
+            "total_isolated_order_count": obj.get("total_isolated_order_count"),
             "pending_order_count": obj.get("pending_order_count"),
             "available_balance": obj.get("available_balance"),
             "status": obj.get("status"),
-            "collateral": obj.get("collateral")
+            "collateral": obj.get("collateral"),
+            "transaction_time": obj.get("transaction_time")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

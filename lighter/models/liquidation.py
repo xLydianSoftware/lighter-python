@@ -107,7 +107,7 @@ class Liquidation(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "id": obj.get("id"),
             "market_id": obj.get("market_id"),
             "type": obj.get("type"),

@@ -97,7 +97,7 @@ class FundingRates(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "funding_rates": [FundingRate.from_dict(_item) for _item in obj["funding_rates"]] if obj.get("funding_rates") is not None else None

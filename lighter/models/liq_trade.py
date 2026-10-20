@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
@@ -30,8 +30,11 @@ class LiqTrade(BaseModel):
     size: StrictStr
     taker_fee: StrictStr
     maker_fee: StrictStr
+    transaction_time: StrictInt
+    bid_account_id: StrictInt
+    ask_account_id: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["price", "size", "taker_fee", "maker_fee"]
+    __properties: ClassVar[List[str]] = ["price", "size", "taker_fee", "maker_fee", "transaction_time", "bid_account_id", "ask_account_id"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -90,11 +93,14 @@ class LiqTrade(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "price": obj.get("price"),
             "size": obj.get("size"),
             "taker_fee": obj.get("taker_fee"),
-            "maker_fee": obj.get("maker_fee")
+            "maker_fee": obj.get("maker_fee"),
+            "transaction_time": obj.get("transaction_time"),
+            "bid_account_id": obj.get("bid_account_id"),
+            "ask_account_id": obj.get("ask_account_id")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

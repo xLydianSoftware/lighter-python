@@ -6,7 +6,7 @@
   - the eth private key will only be used in the Py SDK to sign a message
   - the eth private key is not required in order to trade on the platform
   - the eth private key is not passed to the binary 
-  - the API key config is saved in a local file `./api_key_config.json`
+  - the API key config is saved as `examples/api_key_config.json`; examples resolve this path from their source location, so they can be run from any working directory
 
 ## Start trading on testnet
 - `create_modify_cancel_order_http.py`
@@ -23,6 +23,18 @@
   - creates a market buy order for 0.1 ETH @ market price
 - `create_market_order_eth_sell.py`
   - creates a market sell order for 0.1 ETH @ market price
+
+- `create_stop_loss_market_order.py`
+  - creates a reduce-only market order that is triggered when ETH falls to the stop price
+  - configures the lowest acceptable execution price to limit slippage
+
+- `create_take_profit_market_order.py`
+  - creates a reduce-only market order that is triggered when ETH rises to the take-profit price
+  - configures the lowest acceptable execution price to limit slippage
+
+- `create_twap_market_order.py`
+  - creates a TWAP buy order that splits 0.21 ETH across market orders over 10 minutes
+  - configures the highest acceptable execution price for each market order
 
 - `create_grouped_ioc_with_attached_sl_tp.py`
   - creates an ask (sell) IoC order for 0.1 ETH
@@ -124,6 +136,16 @@ If you want to deposit / withdraw from a public pool, check the following exampl
 
 To get information about pools, check:
 - `public_pool_info.py`
+
+## Binary Options
+Users trade binary options markets with regular orders; markets are discovered through `/events`, see:
+- `create_order_from_event.py`
+
+Market operators (accounts Lighter assigned a binary options slot to) can run markets on their slot:
+- `operator_create_market.py`
+  - opens a market on the slot and prints its public market index
+- `operator_settle_market.py`
+  - settles (or refunds) the market; `binary_options_operator_update_market` can freeze it or change fees/limits/timestamps before that
 
 ## Moving funds around
 - `withdraw_fast.py`

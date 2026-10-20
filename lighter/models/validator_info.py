@@ -88,7 +88,7 @@ class ValidatorInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "address": obj.get("address"),
             "is_active": obj.get("is_active")
         })

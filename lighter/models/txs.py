@@ -97,7 +97,7 @@ class Txs(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "txs": [Tx.from_dict(_item) for _item in obj["txs"]] if obj.get("txs") is not None else None

@@ -27,7 +27,6 @@ class TransferHistoryItem(BaseModel):
     TransferHistoryItem
     """ # noqa: E501
     id: StrictStr
-    asset_id: StrictInt
     amount: StrictStr
     timestamp: StrictInt
     type: StrictStr
@@ -35,17 +34,19 @@ class TransferHistoryItem(BaseModel):
     to_l1_address: StrictStr
     from_account_index: StrictInt
     to_account_index: StrictInt
+    tx_hash: StrictStr
+    asset_id: StrictInt
+    fee: StrictStr
     from_route: StrictStr
     to_route: StrictStr
-    tx_hash: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["id", "asset_id", "amount", "timestamp", "type", "from_l1_address", "to_l1_address", "from_account_index", "to_account_index", "from_route", "to_route", "tx_hash"]
+    __properties: ClassVar[List[str]] = ["id", "amount", "timestamp", "type", "from_l1_address", "to_l1_address", "from_account_index", "to_account_index", "tx_hash", "asset_id", "fee", "from_route", "to_route"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer']):
-            raise ValueError("must be one of enum values ('L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer')")
+        if value not in set(['L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer', 'L2StakeAssetInflow', 'L2StakeAssetOutflow', 'L2UnstakeAssetInflow', 'L2UnstakeAssetOutflow', 'L2ForceBurnSharesInflow', 'L2ForceBurnSharesOutflow', 'L1BurnSharesInflow', 'L1BurnSharesOutflow', 'L1UnstakeAssetInflow', 'L1UnstakeAssetOutflow', 'L2CreatePublicPoolInflow', 'L2CreatePublicPoolOutflow', 'L2CreateStakingPoolInflow', 'L2CreateStakingPoolOutflow']):
+            raise ValueError("must be one of enum values ('L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer', 'L2StakeAssetInflow', 'L2StakeAssetOutflow', 'L2UnstakeAssetInflow', 'L2UnstakeAssetOutflow', 'L2ForceBurnSharesInflow', 'L2ForceBurnSharesOutflow', 'L1BurnSharesInflow', 'L1BurnSharesOutflow', 'L1UnstakeAssetInflow', 'L1UnstakeAssetOutflow', 'L2CreatePublicPoolInflow', 'L2CreatePublicPoolOutflow', 'L2CreateStakingPoolInflow', 'L2CreateStakingPoolOutflow')")
         return value
 
     @field_validator('from_route')
@@ -119,9 +120,8 @@ class TransferHistoryItem(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "id": obj.get("id"),
-            "asset_id": obj.get("asset_id"),
             "amount": obj.get("amount"),
             "timestamp": obj.get("timestamp"),
             "type": obj.get("type"),
@@ -129,9 +129,11 @@ class TransferHistoryItem(BaseModel):
             "to_l1_address": obj.get("to_l1_address"),
             "from_account_index": obj.get("from_account_index"),
             "to_account_index": obj.get("to_account_index"),
+            "tx_hash": obj.get("tx_hash"),
+            "asset_id": obj.get("asset_id"),
+            "fee": obj.get("fee"),
             "from_route": obj.get("from_route"),
-            "to_route": obj.get("to_route"),
-            "tx_hash": obj.get("tx_hash")
+            "to_route": obj.get("to_route")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

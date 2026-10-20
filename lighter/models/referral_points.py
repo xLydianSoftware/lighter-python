@@ -100,7 +100,7 @@ class ReferralPoints(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "referrals": [ReferralPointEntry.from_dict(_item) for _item in obj["referrals"]] if obj.get("referrals") is not None else None,
             "user_total_points": obj.get("user_total_points"),
             "user_last_week_points": obj.get("user_last_week_points"),

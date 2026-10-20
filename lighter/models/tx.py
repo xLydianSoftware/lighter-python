@@ -43,8 +43,9 @@ class Tx(BaseModel):
     sequence_index: StrictInt
     parent_hash: StrictStr
     api_key_index: StrictInt
+    transaction_time: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["hash", "type", "info", "event_info", "status", "transaction_index", "l1_address", "account_index", "nonce", "expire_at", "block_height", "queued_at", "executed_at", "sequence_index", "parent_hash", "api_key_index"]
+    __properties: ClassVar[List[str]] = ["hash", "type", "info", "event_info", "status", "transaction_index", "l1_address", "account_index", "nonce", "expire_at", "block_height", "queued_at", "executed_at", "sequence_index", "parent_hash", "api_key_index", "transaction_time"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -103,7 +104,7 @@ class Tx(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "hash": obj.get("hash"),
             "type": obj.get("type"),
             "info": obj.get("info"),
@@ -119,7 +120,8 @@ class Tx(BaseModel):
             "executed_at": obj.get("executed_at"),
             "sequence_index": obj.get("sequence_index"),
             "parent_hash": obj.get("parent_hash"),
-            "api_key_index": obj.get("api_key_index")
+            "api_key_index": obj.get("api_key_index"),
+            "transaction_time": obj.get("transaction_time")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

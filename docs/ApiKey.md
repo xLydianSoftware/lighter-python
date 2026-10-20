@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **api_key_index** | **int** |  | 
 **nonce** | **int** |  | 
 **public_key** | **str** |  | 
+**transaction_time** | **int** |  | 
 
 ## Example
 

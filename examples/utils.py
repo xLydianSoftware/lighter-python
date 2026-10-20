@@ -1,24 +1,28 @@
 from typing import Tuple, Optional
 import logging
 import json
+from pathlib import Path
 import websockets
 import lighter
+
+
+DEFAULT_API_KEY_CONFIG = Path(__file__).resolve().with_name("api_key_config.json")
 
 
 def trim_exception(e: Exception) -> str:
     return str(e).strip().split("\n")[-1]
 
 
-def save_api_key_config(base_url, account_index, private_keys, config_file="./api_key_config.json"):
+def save_api_key_config(endpoint_profile, account_index, private_keys, config_file=DEFAULT_API_KEY_CONFIG):
     with open(config_file, "w", encoding="utf-8") as f:
         json.dump({
-            "baseUrl": base_url,
+            "endpointProfile": endpoint_profile.name,
             "accountIndex": account_index,
             "privateKeys": private_keys,
         }, f, ensure_ascii=False, indent=2)
 
 
-def get_api_key_config(config_file="./api_key_config.json"):
+def get_api_key_config(config_file=DEFAULT_API_KEY_CONFIG):
     with open(config_file) as f:
         cfg = json.load(f)
 
@@ -27,27 +31,51 @@ def get_api_key_config(config_file="./api_key_config.json"):
     for key in private_keys_original.keys():
         private_key[int(key)] = private_keys_original[key]
 
-    return cfg["baseUrl"], cfg["accountIndex"], private_key
+    profile_name = cfg.get("endpointProfile")
+    if profile_name:
+        profile = lighter.get_endpoint_profile(profile_name)
+    else:
+        # Backward compat: build a profile from the raw baseUrl
+        base_url = cfg["baseUrl"]
+        profile = lighter.EndpointProfile(
+            name="custom",
+            api_url=base_url,
+            ws_url=base_url.replace("https", "wss") + "/stream",
+            chain_id=304 if ("mainnet" in base_url) else 466324 if ("api.rh.lighter" in base_url) else 300,
+        )
+
+    return profile, cfg["accountIndex"], private_key
 
 
-def default_example_setup(config_file="./api_key_config.json") -> Optional[Tuple[lighter.SignerClient, lighter.ApiClient, websockets.connect]]:
+def default_example_setup(config_file=DEFAULT_API_KEY_CONFIG,nonce_management_type=lighter.nonce_manager.NonceManagerType.OPTIMISTIC,endpoint_profile=None,) -> Optional[Tuple[lighter.SignerClient, lighter.ApiClient, websockets.connect]]:
     logging.basicConfig(level=logging.DEBUG)
 
-    base_url, account_index, private_keys = get_api_key_config(config_file)
-    api_client = lighter.ApiClient(configuration=lighter.Configuration(host=base_url))
+    config_endpoint, account_index, private_keys = get_api_key_config(config_file)
+
+    profile = endpoint_profile or config_endpoint
+
+    api_url = profile.api_url
+    chain_id = profile.chain_id
+    ws_url = profile.ws_url
+
+    api_client = lighter.ApiClient(
+        configuration=lighter.Configuration(host=api_url)
+    )
+
     client = lighter.SignerClient(
-        url=base_url,
+        url=api_url,
         account_index=account_index,
         api_private_keys=private_keys,
+        nonce_management_type=nonce_management_type,
+        chain_id=chain_id,
     )
 
     err = client.check_client()
     if err is not None:
         print(f"CheckClient error: {trim_exception(err)}")
-        return
+        return None
 
-    return client, api_client, websockets.connect(f"{base_url.replace('https', 'wss')}/stream")
-
+    return client, api_client, websockets.connect(ws_url)
 
 async def ws_ping(ws_client: websockets.ClientConnection):
     await ws_client.send(json.dumps({"type": "pong"}))

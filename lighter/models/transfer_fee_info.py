@@ -89,7 +89,7 @@ class TransferFeeInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "transfer_fee_usdc": obj.get("transfer_fee_usdc")

@@ -29,8 +29,10 @@ class PublicPoolShare(BaseModel):
     public_pool_index: StrictInt
     shares_amount: StrictInt
     entry_usdc: StrictStr
+    entry_timestamp: StrictInt
+    principal_amount: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["public_pool_index", "shares_amount", "entry_usdc"]
+    __properties: ClassVar[List[str]] = ["public_pool_index", "shares_amount", "entry_usdc", "entry_timestamp", "principal_amount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -89,10 +91,12 @@ class PublicPoolShare(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "public_pool_index": obj.get("public_pool_index"),
             "shares_amount": obj.get("shares_amount"),
-            "entry_usdc": obj.get("entry_usdc")
+            "entry_usdc": obj.get("entry_usdc"),
+            "entry_timestamp": obj.get("entry_timestamp"),
+            "principal_amount": obj.get("principal_amount")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

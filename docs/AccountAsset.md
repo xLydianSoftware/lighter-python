@@ -9,6 +9,9 @@ Name | Type | Description | Notes
 **asset_id** | **int** |  | 
 **balance** | **str** |  | 
 **locked_balance** | **str** |  | 
+**margin_balance** | **str** |  | 
+**margin_mode** | **str** |  | 
+**multiplier** | **str** |  | 
 
 ## Example
 

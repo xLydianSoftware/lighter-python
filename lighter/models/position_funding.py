@@ -30,11 +30,12 @@ class PositionFunding(BaseModel):
     market_id: StrictInt
     funding_id: StrictInt
     change: StrictStr
+    discount: StrictStr
     rate: StrictStr
     position_size: StrictStr
     position_side: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["timestamp", "market_id", "funding_id", "change", "rate", "position_size", "position_side"]
+    __properties: ClassVar[List[str]] = ["timestamp", "market_id", "funding_id", "change", "discount", "rate", "position_size", "position_side"]
 
     @field_validator('position_side')
     def position_side_validate_enum(cls, value):
@@ -100,11 +101,12 @@ class PositionFunding(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "timestamp": obj.get("timestamp"),
             "market_id": obj.get("market_id"),
             "funding_id": obj.get("funding_id"),
             "change": obj.get("change"),
+            "discount": obj.get("discount"),
             "rate": obj.get("rate"),
             "position_size": obj.get("position_size"),
             "position_side": obj.get("position_side")
