@@ -2,6 +2,9 @@ import json
 from websockets.sync.client import connect
 from websockets.client import connect as connect_async
 from lighter.configuration import Configuration
+from lighter.endpoint_profiles import join_url
+import logging
+logger = logging.getLogger(__name__)
 
 class WsClient:
     def __init__(
@@ -12,11 +15,16 @@ class WsClient:
         account_ids=[],
         on_order_book_update=print,
         on_account_update=print,
+        ws_url=None,
+        on_shutdown=None,
+        on_unhandled_message=None,
     ):
-        if host is None:
-            host = Configuration.get_default().host.replace("https://", "")
-
-        self.base_url = f"wss://{host}{path}"
+        if ws_url is not None:
+            self.base_url = ws_url.rstrip("/")
+        else:
+            if host is None:
+                host = Configuration.get_default().host.replace("https://", "")
+            self.base_url = join_url(f"wss://{host}", path)
 
         self.subscriptions = {
             "order_books": order_book_ids,
@@ -31,6 +39,8 @@ class WsClient:
 
         self.on_order_book_update = on_order_book_update
         self.on_account_update = on_account_update
+        self.on_shutdown = on_shutdown
+        self.on_unhandled_message = on_unhandled_message
 
         self.ws = None
 
@@ -53,6 +63,8 @@ class WsClient:
         elif message_type == "ping":
             # Respond to ping with pong
             ws.send(json.dumps({"type": "pong"}))
+        elif message_type == "shutdown":
+            self.handle_shutdown(message)
         else:
             self.handle_unhandled_message(message)
 
@@ -115,17 +127,20 @@ class WsClient:
     def update_orders(self, new_orders, existing_orders):
         for new_order in new_orders:
             is_new_order = True
-            for existing_order in existing_orders:
+            # iterate over a copy so removal is safe
+            existing_order_copy = existing_orders[:]
+            for existing_order in existing_order_copy:
                 if new_order["price"] == existing_order["price"]:
                     is_new_order = False
                     existing_order["size"] = new_order["size"]
                     if float(new_order["size"]) == 0:
                         existing_orders.remove(existing_order)
-                    break
+
             if is_new_order:
                 existing_orders.append(new_order)
 
-        existing_orders = [
+        # final cleanup (in-place)
+        existing_orders[:] = [
             order for order in existing_orders if float(order["size"]) > 0
         ]
 
@@ -142,7 +157,17 @@ class WsClient:
             self.on_account_update(account_id, self.account_states[account_id])
 
     def handle_unhandled_message(self, message):
-        raise Exception(f"Unhandled message: {message}")
+        if self.on_unhandled_message:
+            self.on_unhandled_message(message)
+        else:
+            logger.warning("Unhandled message type %r: %s", message.get("type"), message)
+
+    def handle_shutdown(self, message):
+        close_in_ms = message.get("close_in_ms", 0)
+        if self.on_shutdown:
+            self.on_shutdown(close_in_ms)
+        else:
+            print(f"Server shutting down, connection closes in {close_in_ms}ms")
 
     def on_error(self, ws, error):
         raise Exception(f"Error: {error}")

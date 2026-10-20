@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **remaining_base_amount** | **str** |  | 
 **price** | **str** |  | 
 **order_expiry** | **int** |  | 
+**transaction_time** | **int** |  | 
 
 ## Example
 

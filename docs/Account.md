@@ -8,14 +8,17 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **account_type** | **int** |  | 
+**account_trading_mode** | **int** | Classic&#x3D;0 and Unified&#x3D;1 | 
 **index** | **int** |  | 
 **l1_address** | **str** |  | 
 **cancel_all_time** | **int** |  | 
 **total_order_count** | **int** |  | 
+**total_isolated_order_count** | **int** |  | 
 **pending_order_count** | **int** |  | 
 **available_balance** | **str** |  | 
 **status** | **int** |  | 
 **collateral** | **str** |  | 
+**transaction_time** | **int** |  | 
 
 ## Example
 

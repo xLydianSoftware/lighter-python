@@ -92,7 +92,7 @@ class ReferralPointEntry(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "l1_address": obj.get("l1_address"),
             "total_points": obj.get("total_points"),
             "week_points": obj.get("week_points"),

@@ -16,9 +16,8 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from pydantic import Field, StrictInt, StrictStr
+from pydantic import StrictInt, StrictStr
 from typing import Optional
-from typing_extensions import Annotated
 from lighter.models.result_code import ResultCode
 
 from lighter.api_client import ApiClient, RequestSerialized
@@ -39,13 +38,11 @@ class NotificationApi:
         self.api_client = api_client
 
 
-    @validate_call
     async def notification_ack(
         self,
         notif_id: StrictStr,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -67,10 +64,8 @@ class NotificationApi:
         :type notif_id: str
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -97,7 +92,6 @@ class NotificationApi:
             notif_id=notif_id,
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -119,13 +113,11 @@ class NotificationApi:
         ).data
 
 
-    @validate_call
     async def notification_ack_with_http_info(
         self,
         notif_id: StrictStr,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -147,10 +139,8 @@ class NotificationApi:
         :type notif_id: str
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -177,7 +167,6 @@ class NotificationApi:
             notif_id=notif_id,
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -199,13 +188,11 @@ class NotificationApi:
         )
 
 
-    @validate_call
     async def notification_ack_without_preload_content(
         self,
         notif_id: StrictStr,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -227,10 +214,8 @@ class NotificationApi:
         :type notif_id: str
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -257,7 +242,6 @@ class NotificationApi:
             notif_id=notif_id,
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -280,7 +264,6 @@ class NotificationApi:
         notif_id,
         account_index,
         authorization,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -307,8 +290,6 @@ class NotificationApi:
         # process the form parameters
         if notif_id is not None:
             _form_params.append(('notif_id', notif_id))
-        if auth is not None:
-            _form_params.append(('auth', auth))
         if account_index is not None:
             _form_params.append(('account_index', account_index))
         # process the body parameter
@@ -329,7 +310,7 @@ class NotificationApi:
             _default_content_type = (
                 self.api_client.select_header_content_type(
                     [
-                        'multipart/form-data'
+                        'application/x-www-form-urlencoded'
                     ]
                 )
             )

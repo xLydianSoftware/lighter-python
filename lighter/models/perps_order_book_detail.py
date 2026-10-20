@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Union
 from lighter.models.market_config import MarketConfig
 from typing import Optional, Set
@@ -38,10 +38,10 @@ class PerpsOrderBookDetail(BaseModel):
     liquidation_fee: StrictStr
     min_base_amount: StrictStr
     min_quote_amount: StrictStr
-    order_quote_limit: StrictStr
     supported_size_decimals: StrictInt
     supported_price_decimals: StrictInt
     supported_quote_decimals: StrictInt
+    order_quote_limit: StrictStr
     size_decimals: StrictInt
     price_decimals: StrictInt
     quote_multiplier: StrictInt
@@ -59,21 +59,56 @@ class PerpsOrderBookDetail(BaseModel):
     open_interest: Union[StrictFloat, StrictInt]
     daily_chart: Dict[str, Union[StrictFloat, StrictInt]]
     market_config: MarketConfig
+    strategy_index: StrictInt
+    is_maker_fee_enabled: StrictBool
+    is_taker_fee_enabled: StrictBool
+    funding_clamp_small: StrictStr
+    funding_clamp_big: StrictStr
+    base_interest_rate: StrictStr
+    created_at: StrictStr
+    mark_price: StrictStr
+    index_price: StrictStr
+    multiplier: StrictStr
+    market_flags: StrictInt
+    funding_premium_multiplier: StrictInt
+    start_timestamp: StrictInt
+    end_timestamp: StrictInt
+    settlement_type: StrictInt
+    settlement_price: StrictInt
+    settlement_cap: StrictInt
+    outcome: StrictInt
+    default_price: StrictInt
+    operator_account_index: StrictInt
+    is_frozen: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "size_decimals", "price_decimals", "quote_multiplier", "default_initial_margin_fraction", "min_initial_margin_fraction", "maintenance_margin_fraction", "closeout_margin_fraction", "last_trade_price", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "open_interest", "daily_chart", "market_config"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "size_decimals", "price_decimals", "quote_multiplier", "default_initial_margin_fraction", "min_initial_margin_fraction", "maintenance_margin_fraction", "closeout_margin_fraction", "last_trade_price", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "open_interest", "daily_chart", "market_config", "strategy_index", "is_maker_fee_enabled", "is_taker_fee_enabled", "funding_clamp_small", "funding_clamp_big", "base_interest_rate", "created_at", "mark_price", "index_price", "multiplier", "market_flags", "funding_premium_multiplier", "start_timestamp", "end_timestamp", "settlement_type", "settlement_price", "settlement_cap", "outcome", "default_price", "operator_account_index", "is_frozen"]
 
     @field_validator('market_type')
     def market_type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['perp', 'spot']):
-            raise ValueError("must be one of enum values ('perp', 'spot')")
+        if value not in set(['perp', 'spot', 'binary_options']):
+            raise ValueError("must be one of enum values ('perp', 'spot', 'binary_options')")
         return value
 
     @field_validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['inactive', 'active']):
-            raise ValueError("must be one of enum values ('inactive', 'active')")
+        if value not in set(['inactive', 'active', 'in-settlement', 'waiting-for-settlement', 'settled']):
+            raise ValueError("must be one of enum values ('inactive', 'active', 'in-settlement', 'waiting-for-settlement', 'settled')")
+        return value
+
+    @field_validator('settlement_type')
+    def settlement_type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
+
+    @field_validator('outcome')
+    def outcome_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1, 2]):
+            raise ValueError("must be one of enum values (0, 1, 2)")
         return value
 
     model_config = ConfigDict(
@@ -136,7 +171,7 @@ class PerpsOrderBookDetail(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "symbol": obj.get("symbol"),
             "market_id": obj.get("market_id"),
             "market_type": obj.get("market_type"),
@@ -148,10 +183,10 @@ class PerpsOrderBookDetail(BaseModel):
             "liquidation_fee": obj.get("liquidation_fee"),
             "min_base_amount": obj.get("min_base_amount"),
             "min_quote_amount": obj.get("min_quote_amount"),
-            "order_quote_limit": obj.get("order_quote_limit"),
             "supported_size_decimals": obj.get("supported_size_decimals"),
             "supported_price_decimals": obj.get("supported_price_decimals"),
             "supported_quote_decimals": obj.get("supported_quote_decimals"),
+            "order_quote_limit": obj.get("order_quote_limit"),
             "size_decimals": obj.get("size_decimals"),
             "price_decimals": obj.get("price_decimals"),
             "quote_multiplier": obj.get("quote_multiplier"),
@@ -168,7 +203,28 @@ class PerpsOrderBookDetail(BaseModel):
             "daily_price_change": obj.get("daily_price_change"),
             "open_interest": obj.get("open_interest"),
             "daily_chart": obj.get("daily_chart"),
-            "market_config": MarketConfig.from_dict(obj["market_config"]) if obj.get("market_config") is not None else None
+            "market_config": MarketConfig.from_dict(obj["market_config"]) if obj.get("market_config") is not None else None,
+            "strategy_index": obj.get("strategy_index"),
+            "is_maker_fee_enabled": obj.get("is_maker_fee_enabled"),
+            "is_taker_fee_enabled": obj.get("is_taker_fee_enabled"),
+            "funding_clamp_small": obj.get("funding_clamp_small"),
+            "funding_clamp_big": obj.get("funding_clamp_big"),
+            "base_interest_rate": obj.get("base_interest_rate"),
+            "created_at": obj.get("created_at"),
+            "mark_price": obj.get("mark_price"),
+            "index_price": obj.get("index_price"),
+            "multiplier": obj.get("multiplier"),
+            "market_flags": obj.get("market_flags"),
+            "funding_premium_multiplier": obj.get("funding_premium_multiplier"),
+            "start_timestamp": obj.get("start_timestamp"),
+            "end_timestamp": obj.get("end_timestamp"),
+            "settlement_type": obj.get("settlement_type"),
+            "settlement_price": obj.get("settlement_price"),
+            "settlement_cap": obj.get("settlement_cap"),
+            "outcome": obj.get("outcome"),
+            "default_price": obj.get("default_price"),
+            "operator_account_index": obj.get("operator_account_index"),
+            "is_frozen": obj.get("is_frozen")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

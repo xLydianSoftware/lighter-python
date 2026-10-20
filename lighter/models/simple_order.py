@@ -33,8 +33,9 @@ class SimpleOrder(BaseModel):
     remaining_base_amount: StrictStr
     price: StrictStr
     order_expiry: StrictInt
+    transaction_time: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["order_index", "order_id", "owner_account_index", "initial_base_amount", "remaining_base_amount", "price", "order_expiry"]
+    __properties: ClassVar[List[str]] = ["order_index", "order_id", "owner_account_index", "initial_base_amount", "remaining_base_amount", "price", "order_expiry", "transaction_time"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -93,14 +94,15 @@ class SimpleOrder(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "order_index": obj.get("order_index"),
             "order_id": obj.get("order_id"),
             "owner_account_index": obj.get("owner_account_index"),
             "initial_base_amount": obj.get("initial_base_amount"),
             "remaining_base_amount": obj.get("remaining_base_amount"),
             "price": obj.get("price"),
-            "order_expiry": obj.get("order_expiry")
+            "order_expiry": obj.get("order_expiry"),
+            "transaction_time": obj.get("transaction_time")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

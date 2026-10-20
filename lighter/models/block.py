@@ -107,7 +107,7 @@ class Block(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "commitment": obj.get("commitment"),
             "height": obj.get("height"),
             "state_root": obj.get("state_root"),

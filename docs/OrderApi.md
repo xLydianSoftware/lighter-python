@@ -6,9 +6,13 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**account_active_orders**](OrderApi.md#account_active_orders) | **GET** /api/v1/accountActiveOrders | accountActiveOrders
 [**account_inactive_orders**](OrderApi.md#account_inactive_orders) | **GET** /api/v1/accountInactiveOrders | accountInactiveOrders
+[**account_orders**](OrderApi.md#account_orders) | **GET** /api/v1/accountOrders | accountOrders
 [**asset_details**](OrderApi.md#asset_details) | **GET** /api/v1/assetDetails | assetDetails
+[**exchange_metrics**](OrderApi.md#exchange_metrics) | **GET** /api/v1/exchangeMetrics | exchangeMetrics
 [**exchange_stats**](OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats
+[**execute_stats**](OrderApi.md#execute_stats) | **GET** /api/v1/executeStats | executeStats
 [**export**](OrderApi.md#export) | **GET** /api/v1/export | export
+[**export_historical_trades**](OrderApi.md#export_historical_trades) | **GET** /api/v1/export/historicalTrades | export_historicalTrades
 [**order_book_details**](OrderApi.md#order_book_details) | **GET** /api/v1/orderBookDetails | orderBookDetails
 [**order_book_orders**](OrderApi.md#order_book_orders) | **GET** /api/v1/orderBookOrders | orderBookOrders
 [**order_books**](OrderApi.md#order_books) | **GET** /api/v1/orderBooks | orderBooks
@@ -17,7 +21,7 @@ Method | HTTP request | Description
 
 
 # **account_active_orders**
-> Orders account_active_orders(account_index, market_id, authorization=authorization, auth=auth)
+> Orders account_active_orders(authorization, account_index, market_id=market_id, market_type=market_type)
 
 accountActiveOrders
 
@@ -43,14 +47,14 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.OrderApi(api_client)
+    authorization = 'authorization_example' # str | 
     account_index = 56 # int | 
-    market_id = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    market_id = 56 # int | If not specified, returns active orders for all markets. (optional)
+    market_type = all # str |  (optional) (default to all)
 
     try:
         # accountActiveOrders
-        api_response = await api_instance.account_active_orders(account_index, market_id, authorization=authorization, auth=auth)
+        api_response = await api_instance.account_active_orders(authorization, account_index, market_id=market_id, market_type=market_type)
         print("The response of OrderApi->account_active_orders:\n")
         pprint(api_response)
     except Exception as e:
@@ -64,10 +68,10 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **account_index** | **int**|  | 
- **market_id** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **market_id** | **int**| If not specified, returns active orders for all markets. | [optional] 
+ **market_type** | **str**|  | [optional] [default to all]
 
 ### Return type
 
@@ -92,11 +96,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **account_inactive_orders**
-> Orders account_inactive_orders(account_index, limit, authorization=authorization, auth=auth, market_id=market_id, ask_filter=ask_filter, between_timestamps=between_timestamps, cursor=cursor)
+> Orders account_inactive_orders(authorization, account_index, limit, market_id=market_id, ask_filter=ask_filter, between_timestamps=between_timestamps, cursor=cursor, market_type=market_type)
 
 accountInactiveOrders
 
-Get account inactive orders
+Get account inactive orders. `auth` can be generated using the SDK.
 
 ### Example
 
@@ -118,18 +122,18 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.OrderApi(api_client)
+    authorization = 'authorization_example' # str | 
     account_index = 56 # int | 
     limit = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
-    market_id = 255 # int |  (optional) (default to 255)
-    ask_filter = -1 # int |  (optional) (default to -1)
+    market_id = 56 # int |  (optional)
+    ask_filter = 56 # int |  (optional)
     between_timestamps = 'between_timestamps_example' # str |  (optional)
     cursor = 'cursor_example' # str |  (optional)
+    market_type = all # str |  (optional) (default to all)
 
     try:
         # accountInactiveOrders
-        api_response = await api_instance.account_inactive_orders(account_index, limit, authorization=authorization, auth=auth, market_id=market_id, ask_filter=ask_filter, between_timestamps=between_timestamps, cursor=cursor)
+        api_response = await api_instance.account_inactive_orders(authorization, account_index, limit, market_id=market_id, ask_filter=ask_filter, between_timestamps=between_timestamps, cursor=cursor, market_type=market_type)
         print("The response of OrderApi->account_inactive_orders:\n")
         pprint(api_response)
     except Exception as e:
@@ -143,14 +147,87 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **account_index** | **int**|  | 
  **limit** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
- **market_id** | **int**|  | [optional] [default to 255]
- **ask_filter** | **int**|  | [optional] [default to -1]
+ **market_id** | **int**|  | [optional] 
+ **ask_filter** | **int**|  | [optional] 
  **between_timestamps** | **str**|  | [optional] 
  **cursor** | **str**|  | [optional] 
+ **market_type** | **str**|  | [optional] [default to all]
+
+### Return type
+
+[**Orders**](Orders.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **account_orders**
+> Orders account_orders(authorization, client_order_indexes, account_index=account_index)
+
+accountOrders
+
+Get account orders by client order indexes. Account index defaults to the authorization token's account. Supports the last 10K active orders (with no time limits), or the last 1K inactive orders (in the last 24 hours).
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.orders import Orders
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.OrderApi(api_client)
+    authorization = 'authorization_example' # str | 
+    client_order_indexes = 'client_order_indexes_example' # str |  comma-separated int64s, e.g. \"123,456\", with a limit of 20.
+    account_index = 56 # int |  (optional)
+
+    try:
+        # accountOrders
+        api_response = await api_instance.account_orders(authorization, client_order_indexes, account_index=account_index)
+        print("The response of OrderApi->account_orders:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling OrderApi->account_orders: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **client_order_indexes** | **str**|  comma-separated int64s, e.g. \&quot;123,456\&quot;, with a limit of 20. | 
+ **account_index** | **int**|  | [optional] 
 
 ### Return type
 
@@ -179,7 +256,7 @@ No authorization required
 
 assetDetails
 
-Get asset details
+Get asset details for a specific asset or all assets
 
 ### Example
 
@@ -201,7 +278,7 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.OrderApi(api_client)
-    asset_id = 0 # int |  (optional) (default to 0)
+    asset_id = 56 # int |  (optional)
 
     try:
         # assetDetails
@@ -219,11 +296,86 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **asset_id** | **int**|  | [optional] [default to 0]
+ **asset_id** | **int**|  | [optional] 
 
 ### Return type
 
 [**AssetDetails**](AssetDetails.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **exchange_metrics**
+> RespGetExchangeMetrics exchange_metrics(period, kind, filter=filter, value=value)
+
+exchangeMetrics
+
+Get exchange metrics. When filtering by market, use the market symbol as a value.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_exchange_metrics import RespGetExchangeMetrics
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.OrderApi(api_client)
+    period = 'period_example' # str | 
+    kind = 'kind_example' # str | 
+    filter = 'filter_example' # str |  (optional)
+    value = 'value_example' # str |  (optional)
+
+    try:
+        # exchangeMetrics
+        api_response = await api_instance.exchange_metrics(period, kind, filter=filter, value=value)
+        print("The response of OrderApi->exchange_metrics:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling OrderApi->exchange_metrics: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **period** | **str**|  | 
+ **kind** | **str**|  | 
+ **filter** | **str**|  | [optional] 
+ **value** | **str**|  | [optional] 
+
+### Return type
+
+[**RespGetExchangeMetrics**](RespGetExchangeMetrics.md)
 
 ### Authorization
 
@@ -308,12 +460,81 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **execute_stats**
+> RespGetExecuteStats execute_stats(period)
+
+executeStats
+
+Get execute stats
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_execute_stats import RespGetExecuteStats
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.OrderApi(api_client)
+    period = 'period_example' # str | 
+
+    try:
+        # executeStats
+        api_response = await api_instance.execute_stats(period)
+        print("The response of OrderApi->execute_stats:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling OrderApi->execute_stats: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **period** | **str**|  | 
+
+### Return type
+
+[**RespGetExecuteStats**](RespGetExecuteStats.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **export**
-> ExportData export(type, authorization=authorization, auth=auth, account_index=account_index, market_id=market_id)
+> ExportData export(authorization, type, account_index=account_index, market_id=market_id, start_timestamp=start_timestamp, end_timestamp=end_timestamp, side=side, role=role, trade_type=trade_type, aggregate=aggregate)
 
 export
 
-Export data
+Export trades and funding payments, limited to 12 months or 1M trades. END_TS_IN_MS - START_TS_IN_MS should not be larger than 12 months in milliseconds, both timestamps should be greater than or equal to 17 January 2025 00:00:00 UTC (lighter's mainnet genesis)
 
 ### Example
 
@@ -335,15 +556,20 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.OrderApi(api_client)
+    authorization = 'authorization_example' # str | 
     type = 'type_example' # str | 
-    authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
-    account_index = -1 # int |  (optional) (default to -1)
-    market_id = 255 # int |  (optional) (default to 255)
+    account_index = 56 # int |  (optional)
+    market_id = 56 # int |  (optional)
+    start_timestamp = 56 # int |  (optional)
+    end_timestamp = 56 # int |  (optional)
+    side = all # str |  (optional) (default to all)
+    role = all # str |  (optional) (default to all)
+    trade_type = all # str |  (optional) (default to all)
+    aggregate = False # bool |  (optional) (default to False)
 
     try:
         # export
-        api_response = await api_instance.export(type, authorization=authorization, auth=auth, account_index=account_index, market_id=market_id)
+        api_response = await api_instance.export(authorization, type, account_index=account_index, market_id=market_id, start_timestamp=start_timestamp, end_timestamp=end_timestamp, side=side, role=role, trade_type=trade_type, aggregate=aggregate)
         print("The response of OrderApi->export:\n")
         pprint(api_response)
     except Exception as e:
@@ -357,15 +583,95 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **type** | **str**|  | 
- **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
- **account_index** | **int**|  | [optional] [default to -1]
- **market_id** | **int**|  | [optional] [default to 255]
+ **account_index** | **int**|  | [optional] 
+ **market_id** | **int**|  | [optional] 
+ **start_timestamp** | **int**|  | [optional] 
+ **end_timestamp** | **int**|  | [optional] 
+ **side** | **str**|  | [optional] [default to all]
+ **role** | **str**|  | [optional] [default to all]
+ **trade_type** | **str**|  | [optional] [default to all]
+ **aggregate** | **bool**|  | [optional] [default to False]
 
 ### Return type
 
 [**ExportData**](ExportData.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **export_historical_trades**
+> HistoricalTradesExportData export_historical_trades(l1_address, var_date, authorization=authorization, auth=auth)
+
+export_historicalTrades
+
+Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.historical_trades_export_data import HistoricalTradesExportData
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.OrderApi(api_client)
+    l1_address = 'l1_address_example' # str | 
+    var_date = 'var_date_example' # str |  UTC day, YYYY-MM-DD
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+
+    try:
+        # export_historicalTrades
+        api_response = await api_instance.export_historical_trades(l1_address, var_date, authorization=authorization, auth=auth)
+        print("The response of OrderApi->export_historical_trades:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling OrderApi->export_historical_trades: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **l1_address** | **str**|  | 
+ **var_date** | **str**|  UTC day, YYYY-MM-DD | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+
+### Return type
+
+[**HistoricalTradesExportData**](HistoricalTradesExportData.md)
 
 ### Authorization
 
@@ -412,8 +718,8 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.OrderApi(api_client)
-    market_id = 255 # int |  (optional) (default to 255)
-    filter = all # str |  (optional) (default to all)
+    market_id = 56 # int |  (optional)
+    filter = all # str | Filter order books by type (optional) (default to all)
 
     try:
         # orderBookDetails
@@ -431,8 +737,8 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **market_id** | **int**|  | [optional] [default to 255]
- **filter** | **str**|  | [optional] [default to all]
+ **market_id** | **int**|  | [optional] 
+ **filter** | **str**| Filter order books by type | [optional] [default to all]
 
 ### Return type
 
@@ -554,7 +860,7 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.OrderApi(api_client)
-    market_id = 255 # int |  (optional) (default to 255)
+    market_id = 56 # int |  (optional)
     filter = all # str |  (optional) (default to all)
 
     try:
@@ -573,7 +879,7 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **market_id** | **int**|  | [optional] [default to 255]
+ **market_id** | **int**|  | [optional] 
  **filter** | **str**|  | [optional] [default to all]
 
 ### Return type
@@ -670,11 +976,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **trades**
-> Trades trades(sort_by, limit, authorization=authorization, auth=auth, market_id=market_id, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate)
+> Trades trades(sort_by, limit, authorization=authorization, market_id=market_id, market_type=market_type, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate, skip_ask_order_id=skip_ask_order_id, skip_bid_order_id=skip_bid_order_id, integrator_account_index=integrator_account_index, order_index_str=order_index_str)
 
 trades
 
-Get trades
+Get trades for lighter accounts, including sub-accounts and public pools. `auth` is required for master accounts and sub accounts.
 
 ### Example
 
@@ -699,21 +1005,25 @@ async with lighter.ApiClient(configuration) as api_client:
     sort_by = 'sort_by_example' # str | 
     limit = 56 # int | 
     authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
-    market_id = 255 # int |  (optional) (default to 255)
-    account_index = -1 # int |  (optional) (default to -1)
+    market_id = 56 # int |  (optional)
+    market_type = all # str |  (optional) (default to all)
+    account_index = 56 # int |  (optional)
     order_index = 56 # int |  (optional)
     sort_dir = desc # str |  (optional) (default to desc)
     cursor = 'cursor_example' # str |  (optional)
-    var_from = -1 # int |  (optional) (default to -1)
-    ask_filter = -1 # int |  (optional) (default to -1)
+    var_from = 56 # int |  (optional)
+    ask_filter = 56 # int |  (optional)
     role = all # str |  (optional) (default to all)
     type = all # str |  (optional) (default to all)
     aggregate = False # bool |  (optional) (default to False)
+    skip_ask_order_id = 'skip_ask_order_id_example' # str |  (optional)
+    skip_bid_order_id = 'skip_bid_order_id_example' # str |  (optional)
+    integrator_account_index = 56 # int |  (optional)
+    order_index_str = 'order_index_str_example' # str |  takes precedence over order_index; for clients that cannot represent uint64 exactly (optional)
 
     try:
         # trades
-        api_response = await api_instance.trades(sort_by, limit, authorization=authorization, auth=auth, market_id=market_id, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate)
+        api_response = await api_instance.trades(sort_by, limit, authorization=authorization, market_id=market_id, market_type=market_type, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate, skip_ask_order_id=skip_ask_order_id, skip_bid_order_id=skip_bid_order_id, integrator_account_index=integrator_account_index, order_index_str=order_index_str)
         print("The response of OrderApi->trades:\n")
         pprint(api_response)
     except Exception as e:
@@ -730,17 +1040,21 @@ Name | Type | Description  | Notes
  **sort_by** | **str**|  | 
  **limit** | **int**|  | 
  **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
- **market_id** | **int**|  | [optional] [default to 255]
- **account_index** | **int**|  | [optional] [default to -1]
+ **market_id** | **int**|  | [optional] 
+ **market_type** | **str**|  | [optional] [default to all]
+ **account_index** | **int**|  | [optional] 
  **order_index** | **int**|  | [optional] 
  **sort_dir** | **str**|  | [optional] [default to desc]
  **cursor** | **str**|  | [optional] 
- **var_from** | **int**|  | [optional] [default to -1]
- **ask_filter** | **int**|  | [optional] [default to -1]
+ **var_from** | **int**|  | [optional] 
+ **ask_filter** | **int**|  | [optional] 
  **role** | **str**|  | [optional] [default to all]
  **type** | **str**|  | [optional] [default to all]
  **aggregate** | **bool**|  | [optional] [default to False]
+ **skip_ask_order_id** | **str**|  | [optional] 
+ **skip_bid_order_id** | **str**|  | [optional] 
+ **integrator_account_index** | **int**|  | [optional] 
+ **order_index_str** | **str**|  takes precedence over order_index; for clients that cannot represent uint64 exactly | [optional] 
 
 ### Return type
 

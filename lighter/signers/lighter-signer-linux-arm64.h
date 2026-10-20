@@ -43,7 +43,7 @@ typedef struct {
 } ApiKeyResponse;
 
 typedef struct {
-    uint8_t MarketIndex;
+    int64_t MarketIndex;
     int64_t ClientOrderIndex;
     int64_t BaseAmount;
     uint32_t Price;
@@ -54,6 +54,46 @@ typedef struct {
     uint32_t TriggerPrice;
     int64_t OrderExpiry;
 } CreateOrderTxReq;
+
+typedef struct {
+    int16_t MarketSlot;
+    int64_t StartTimestampMs;
+    int64_t EndTimestampMs;
+    uint32_t SettlementCap;
+    uint8_t SettlementType;
+    uint32_t DefaultPrice;
+    uint32_t TakerFee;
+    uint32_t MakerFee;
+    int64_t MinBaseAmount;
+    int64_t MinQuoteAmount;
+    int64_t OrderQuoteLimit;
+    int64_t OpenInterestLimit;
+    uint8_t IsFrozen;
+    char* Symbol;
+    uint8_t SizeDecimals;
+    uint8_t PriceDecimals;
+} BinaryOptionsOperatorCreateMarketTxReq;
+
+typedef struct {
+    int16_t MarketSlot;
+    int64_t MarketIndex;
+    int64_t StartTimestampMs;
+    int64_t EndTimestampMs;
+    uint32_t TakerFee;
+    uint32_t MakerFee;
+    int64_t MinBaseAmount;
+    int64_t MinQuoteAmount;
+    int64_t OrderQuoteLimit;
+    int64_t OpenInterestLimit;
+    uint8_t IsFrozen;
+} BinaryOptionsOperatorUpdateMarketTxReq;
+
+typedef struct {
+    int16_t MarketSlot;
+    int64_t MarketIndex;
+    uint32_t SettlementPrice;
+    uint8_t IsRefund;
+} BinaryOptionsOperatorSettleMarketTxReq;
 
 #line 1 "cgo-generated-wrapper"
 
@@ -114,22 +154,31 @@ extern "C" {
 extern ApiKeyResponse GenerateAPIKey();
 extern char* CreateClient(char* cUrl, char* cPrivateKey, int cChainId, int cApiKeyIndex, long long int cAccountIndex);
 extern char* CheckClient(int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignChangePubKey(char* cPubKey, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignCreateOrder(int cMarketIndex, long long int cClientOrderIndex, long long int cBaseAmount, int cPrice, int cIsAsk, int cOrderType, int cTimeInForce, int cReduceOnly, int cTriggerPrice, long long int cOrderExpiry, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignCreateGroupedOrders(uint8_t cGroupingType, CreateOrderTxReq* cOrders, int cLen, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignCancelOrder(int cMarketIndex, long long int cOrderIndex, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignWithdraw(int cAssetIndex, int cRouteType, long long unsigned int cAmount, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignCreateSubAccount(long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignCancelAllOrders(int cTimeInForce, long long int cTime, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignModifyOrder(int cMarketIndex, long long int cIndex, long long int cBaseAmount, long long int cPrice, long long int cTriggerPrice, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignTransfer(long long int cToAccountIndex, int16_t cAssetIndex, uint8_t cFromRouteType, uint8_t cToRouteType, long long int cAmount, long long int cUsdcFee, char* cMemo, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignCreatePublicPool(long long int cOperatorFee, int cInitialTotalShares, long long int cMinOperatorShareRate, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignUpdatePublicPool(long long int cPublicPoolIndex, int cStatus, long long int cOperatorFee, int cMinOperatorShareRate, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignMintShares(long long int cPublicPoolIndex, long long int cShareAmount, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignBurnShares(long long int cPublicPoolIndex, long long int cShareAmount, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignUpdateLeverage(int cMarketIndex, int cInitialMarginFraction, int cMarginMode, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignChangePubKey(char* cPubKey, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignCreateOrder(long long int cMarketIndex, long long int cClientOrderIndex, long long int cBaseAmount, int cPrice, int cIsAsk, int cOrderType, int cTimeInForce, int cReduceOnly, int cTriggerPrice, long long int cOrderExpiry, long long int cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignCreateGroupedOrders(uint8_t cGroupingType, CreateOrderTxReq* cOrders, int cLen, long long int cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignCancelOrder(long long int cMarketIndex, long long int cOrderIndex, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignWithdraw(int cAssetIndex, int cRouteType, long long unsigned int cAmount, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignCreateSubAccount(uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignCancelAllOrders(int cTimeInForce, long long int cTime, long long int cCancelAllMarketIndex, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignModifyOrder(long long int cMarketIndex, long long int cIndex, long long int cBaseAmount, long long int cPrice, long long int cTriggerPrice, long long int cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long int cNonce, long long int cOrderVersion, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignTransfer(long long int cToAccountIndex, int16_t cAssetIndex, uint8_t cFromRouteType, uint8_t cToRouteType, long long int cAmount, long long int cUsdcFee, char* cMemo, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignCreatePublicPool(long long int cOperatorFee, int cInitialTotalShares, long long int cMinOperatorShareRate, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignUpdatePublicPool(long long int cPublicPoolIndex, int cStatus, long long int cOperatorFee, int cMinOperatorShareRate, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignMintShares(long long int cPublicPoolIndex, long long int cShareAmount, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignBurnShares(long long int cPublicPoolIndex, long long int cShareAmount, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignUpdateLeverage(long long int cMarketIndex, int cInitialMarginFraction, int cMarginMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern StrOrErr CreateAuthToken(long long int cDeadline, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignUpdateMargin(int cMarketIndex, long long int cUSDCAmount, int cDirection, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignUpdateMargin(long long int cMarketIndex, long long int cUSDCAmount, int cDirection, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignStakeAssets(long long int cStakingPoolIndex, long long int cShareAmount, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignUnstakeAssets(long long int cStakingPoolIndex, long long int cShareAmount, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignApproveIntegrator(long long int cIntegratorIndex, uint32_t cMaxPerpsTakerFee, uint32_t cMaxPerpsMakerFee, uint32_t cMaxSpotTakerFee, uint32_t cMaxSpotMakerFee, long long int cApprovalExpiry, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignUpdateAccountConfig(uint8_t cAccountTradingMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignUpdateAccountAssetConfig(int16_t cAssetIndex, uint8_t cAssetMarginMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorCreateMarket(BinaryOptionsOperatorCreateMarketTxReq* cReq, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorUpdateMarket(BinaryOptionsOperatorUpdateMarketTxReq* cReq, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorSettleMarket(BinaryOptionsOperatorSettleMarketTxReq* cReq, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern void Free(void* ptr);
 
 #ifdef __cplusplus
 }

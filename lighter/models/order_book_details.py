@@ -106,7 +106,7 @@ class OrderBookDetails(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "order_book_details": [PerpsOrderBookDetail.from_dict(_item) for _item in obj["order_book_details"]] if obj.get("order_book_details") is not None else None,

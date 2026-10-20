@@ -59,8 +59,16 @@ class Order(BaseModel):
     timestamp: StrictInt
     created_at: StrictInt
     updated_at: StrictInt
+    transaction_time: StrictInt
+    integrator_fee_collector_index: StrictStr
+    integrator_maker_fee: StrictStr
+    integrator_taker_fee: StrictStr
+    order_flags: StrictInt
+    order_version: StrictInt
+    market_symbol: StrictStr
+    market_kind: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "block_height", "timestamp", "created_at", "updated_at"]
+    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "block_height", "timestamp", "created_at", "updated_at", "transaction_time", "integrator_fee_collector_index", "integrator_maker_fee", "integrator_taker_fee", "order_flags", "order_version", "market_symbol", "market_kind"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
@@ -88,6 +96,13 @@ class Order(BaseModel):
         """Validates the enum"""
         if value not in set(['na', 'ready', 'mark-price', 'twap', 'parent-order']):
             raise ValueError("must be one of enum values ('na', 'ready', 'mark-price', 'twap', 'parent-order')")
+        return value
+
+    @field_validator('market_kind')
+    def market_kind_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['spot', 'bo', 'perps']):
+            raise ValueError("must be one of enum values ('spot', 'bo', 'perps')")
         return value
 
     model_config = ConfigDict(
@@ -147,7 +162,7 @@ class Order(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "order_index": obj.get("order_index"),
             "client_order_index": obj.get("client_order_index"),
             "order_id": obj.get("order_id"),
@@ -180,7 +195,15 @@ class Order(BaseModel):
             "block_height": obj.get("block_height"),
             "timestamp": obj.get("timestamp"),
             "created_at": obj.get("created_at"),
-            "updated_at": obj.get("updated_at")
+            "updated_at": obj.get("updated_at"),
+            "transaction_time": obj.get("transaction_time"),
+            "integrator_fee_collector_index": obj.get("integrator_fee_collector_index"),
+            "integrator_maker_fee": obj.get("integrator_maker_fee"),
+            "integrator_taker_fee": obj.get("integrator_taker_fee"),
+            "order_flags": obj.get("order_flags"),
+            "order_version": obj.get("order_version"),
+            "market_symbol": obj.get("market_symbol"),
+            "market_kind": obj.get("market_kind")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -90,7 +90,7 @@ class Announcement(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "title": obj.get("title"),
             "content": obj.get("content"),
             "created_at": obj.get("created_at"),

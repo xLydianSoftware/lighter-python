@@ -38,6 +38,14 @@ Name | Type | Description | Notes
 **timestamp** | **int** |  | 
 **created_at** | **int** |  | 
 **updated_at** | **int** |  | 
+**transaction_time** | **int** |  | 
+**integrator_fee_collector_index** | **str** |  | 
+**integrator_maker_fee** | **str** |  | 
+**integrator_taker_fee** | **str** |  | 
+**order_flags** | **int** |  | 
+**order_version** | **int** |  | 
+**market_symbol** | **str** |  | 
+**market_kind** | **str** |  | 
 
 ## Example
 

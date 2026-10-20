@@ -30,8 +30,9 @@ class ApiKey(BaseModel):
     api_key_index: StrictInt
     nonce: StrictInt
     public_key: StrictStr
+    transaction_time: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "api_key_index", "nonce", "public_key"]
+    __properties: ClassVar[List[str]] = ["account_index", "api_key_index", "nonce", "public_key", "transaction_time"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -90,11 +91,12 @@ class ApiKey(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "account_index": obj.get("account_index"),
             "api_key_index": obj.get("api_key_index"),
             "nonce": obj.get("nonce"),
-            "public_key": obj.get("public_key")
+            "public_key": obj.get("public_key"),
+            "transaction_time": obj.get("transaction_time")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

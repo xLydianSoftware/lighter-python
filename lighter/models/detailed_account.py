@@ -20,9 +20,13 @@ import json
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.account_asset import AccountAsset
+from lighter.models.account_binary_options_position import AccountBinaryOptionsPosition
 from lighter.models.account_position import AccountPosition
+from lighter.models.approved_integrator import ApprovedIntegrator
+from lighter.models.pending_unlock import PendingUnlock
 from lighter.models.public_pool_info import PublicPoolInfo
 from lighter.models.public_pool_share import PublicPoolShare
+from lighter.models.sub_account_metadata import SubAccountMetadata
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -33,12 +37,14 @@ class DetailedAccount(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     account_type: StrictInt
+    account_trading_mode: Optional[StrictInt] = Field(default=None, description="Classic=0 and Unified=1")
     index: StrictInt
     l1_address: StrictStr
     cancel_all_time: StrictInt
     total_order_count: StrictInt
+    total_isolated_order_count: StrictInt
     pending_order_count: StrictInt
-    available_balance: Optional[StrictStr]
+    available_balance: StrictStr
     status: StrictInt
     collateral: StrictStr
     account_index: StrictInt
@@ -50,10 +56,21 @@ class DetailedAccount(BaseModel):
     assets: List[AccountAsset]
     total_asset_value: StrictStr
     cross_asset_value: StrictStr
-    pool_info: Optional[PublicPoolInfo]
+    pool_info: PublicPoolInfo
     shares: List[PublicPoolShare]
+    created_at: StrictInt
+    transaction_time: StrictInt
+    pending_unlocks: Optional[List[PendingUnlock]] = None
+    approved_integrators: Optional[List[ApprovedIntegrator]] = None
+    can_rfq: StrictBool
+    cross_initial_margin_requirement: StrictStr
+    cross_maintenance_margin_requirement: StrictStr
+    can_rfq_market_ids: List[StrictStr]
+    metadata: SubAccountMetadata
+    agent_enabled: StrictBool
+    bo_positions: Optional[List[AccountBinaryOptionsPosition]] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "created_at", "transaction_time", "pending_unlocks", "approved_integrators", "can_rfq", "cross_initial_margin_requirement", "cross_maintenance_margin_requirement", "can_rfq_market_ids", "metadata", "agent_enabled", "bo_positions"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -120,6 +137,30 @@ class DetailedAccount(BaseModel):
                 if _item:
                     _items.append(_item.to_dict())
             _dict['shares'] = _items
+        # override the default output from pydantic by calling `to_dict()` of each item in pending_unlocks (list)
+        _items = []
+        if self.pending_unlocks:
+            for _item in self.pending_unlocks:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['pending_unlocks'] = _items
+        # override the default output from pydantic by calling `to_dict()` of each item in approved_integrators (list)
+        _items = []
+        if self.approved_integrators:
+            for _item in self.approved_integrators:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['approved_integrators'] = _items
+        # override the default output from pydantic by calling `to_dict()` of metadata
+        if self.metadata:
+            _dict['metadata'] = self.metadata.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in bo_positions (list)
+        _items = []
+        if self.bo_positions:
+            for _item in self.bo_positions:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['bo_positions'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -136,14 +177,16 @@ class DetailedAccount(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "account_type": obj.get("account_type"),
+            "account_trading_mode": obj.get("account_trading_mode"),
             "index": obj.get("index"),
             "l1_address": obj.get("l1_address"),
             "cancel_all_time": obj.get("cancel_all_time"),
             "total_order_count": obj.get("total_order_count"),
+            "total_isolated_order_count": obj.get("total_isolated_order_count"),
             "pending_order_count": obj.get("pending_order_count"),
             "available_balance": obj.get("available_balance"),
             "status": obj.get("status"),
@@ -158,7 +201,18 @@ class DetailedAccount(BaseModel):
             "total_asset_value": obj.get("total_asset_value"),
             "cross_asset_value": obj.get("cross_asset_value"),
             "pool_info": PublicPoolInfo.from_dict(obj["pool_info"]) if obj.get("pool_info") is not None else None,
-            "shares": [PublicPoolShare.from_dict(_item) for _item in obj["shares"]] if obj.get("shares") is not None else None
+            "shares": [PublicPoolShare.from_dict(_item) for _item in obj["shares"]] if obj.get("shares") is not None else None,
+            "created_at": obj.get("created_at"),
+            "transaction_time": obj.get("transaction_time"),
+            "pending_unlocks": [PendingUnlock.from_dict(_item) for _item in obj["pending_unlocks"]] if obj.get("pending_unlocks") is not None else None,
+            "approved_integrators": [ApprovedIntegrator.from_dict(_item) for _item in obj["approved_integrators"]] if obj.get("approved_integrators") is not None else None,
+            "can_rfq": obj.get("can_rfq"),
+            "cross_initial_margin_requirement": obj.get("cross_initial_margin_requirement"),
+            "cross_maintenance_margin_requirement": obj.get("cross_maintenance_margin_requirement"),
+            "can_rfq_market_ids": obj.get("can_rfq_market_ids"),
+            "metadata": SubAccountMetadata.from_dict(obj["metadata"]) if obj.get("metadata") is not None else None,
+            "agent_enabled": obj.get("agent_enabled"),
+            "bo_positions": [AccountBinaryOptionsPosition.from_dict(_item) for _item in obj["bo_positions"]] if obj.get("bo_positions") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -89,7 +89,7 @@ class RespGetFastBridgeInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "fast_bridge_limit": obj.get("fast_bridge_limit")

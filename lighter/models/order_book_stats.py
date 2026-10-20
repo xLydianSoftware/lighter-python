@@ -92,7 +92,7 @@ class OrderBookStats(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "symbol": obj.get("symbol"),
             "last_trade_price": obj.get("last_trade_price"),
             "daily_trades_count": obj.get("daily_trades_count"),

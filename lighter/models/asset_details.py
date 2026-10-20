@@ -97,7 +97,7 @@ class AssetDetails(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "asset_details": [Asset.from_dict(_item) for _item in obj["asset_details"]] if obj.get("asset_details") is not None else None

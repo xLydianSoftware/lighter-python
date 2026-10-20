@@ -89,7 +89,7 @@ class BridgeSupportedNetwork(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "name": obj.get("name"),
             "chain_id": obj.get("chain_id"),
             "explorer": obj.get("explorer")

@@ -107,7 +107,7 @@ class OrderBookOrders(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
             "total_asks": obj.get("total_asks"),

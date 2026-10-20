@@ -8,10 +8,12 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **account_type** | **int** |  | 
+**account_trading_mode** | **int** | Classic&#x3D;0 and Unified&#x3D;1 | [optional] 
 **index** | **int** |  | 
 **l1_address** | **str** |  | 
 **cancel_all_time** | **int** |  | 
 **total_order_count** | **int** |  | 
+**total_isolated_order_count** | **int** |  | 
 **pending_order_count** | **int** |  | 
 **available_balance** | **str** |  | 
 **status** | **int** |  | 
@@ -27,6 +29,17 @@ Name | Type | Description | Notes
 **cross_asset_value** | **str** |  | 
 **pool_info** | [**PublicPoolInfo**](PublicPoolInfo.md) |  | 
 **shares** | [**List[PublicPoolShare]**](PublicPoolShare.md) |  | 
+**created_at** | **int** |  | 
+**transaction_time** | **int** |  | 
+**pending_unlocks** | [**List[PendingUnlock]**](PendingUnlock.md) |  | [optional] 
+**approved_integrators** | [**List[ApprovedIntegrator]**](ApprovedIntegrator.md) |  | [optional] 
+**can_rfq** | **bool** |  | 
+**cross_initial_margin_requirement** | **str** |  | 
+**cross_maintenance_margin_requirement** | **str** |  | 
+**can_rfq_market_ids** | **List[str]** |  | 
+**metadata** | [**SubAccountMetadata**](SubAccountMetadata.md) |  | 
+**agent_enabled** | **bool** |  | 
+**bo_positions** | [**List[AccountBinaryOptionsPosition]**](AccountBinaryOptionsPosition.md) |  | [optional] 
 
 ## Example
 

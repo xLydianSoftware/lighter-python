@@ -23,6 +23,7 @@ Name | Type | Description | Notes
 **sequence_index** | **int** |  | 
 **parent_hash** | **str** |  | 
 **api_key_index** | **int** |  | 
+**transaction_time** | **int** |  | 
 **committed_at** | **int** |  | 
 **verified_at** | **int** |  | 
 

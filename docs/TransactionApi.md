@@ -10,6 +10,7 @@ Method | HTTP request | Description
 [**next_nonce**](TransactionApi.md#next_nonce) | **GET** /api/v1/nextNonce | nextNonce
 [**send_tx**](TransactionApi.md#send_tx) | **POST** /api/v1/sendTx | sendTx
 [**send_tx_batch**](TransactionApi.md#send_tx_batch) | **POST** /api/v1/sendTxBatch | sendTxBatch
+[**set_account_metadata**](TransactionApi.md#set_account_metadata) | **POST** /api/v1/setAccountMetadata | setAccountMetadata
 [**transfer_history**](TransactionApi.md#transfer_history) | **GET** /api/v1/transfer/history | transfer_history
 [**tx**](TransactionApi.md#tx) | **GET** /api/v1/tx | tx
 [**tx_from_l1_tx_hash**](TransactionApi.md#tx_from_l1_tx_hash) | **GET** /api/v1/txFromL1TxHash | txFromL1TxHash
@@ -18,7 +19,7 @@ Method | HTTP request | Description
 
 
 # **account_txs**
-> Txs account_txs(limit, by, value, authorization=authorization, index=index, types=types, auth=auth)
+> Txs account_txs(limit, by, value, index=index, authorization=authorization, types=types)
 
 accountTxs
 
@@ -47,14 +48,13 @@ async with lighter.ApiClient(configuration) as api_client:
     limit = 56 # int | 
     by = 'by_example' # str | 
     value = 'value_example' # str | 
-    authorization = 'authorization_example' # str |  (optional)
     index = 56 # int |  (optional)
+    authorization = 'authorization_example' # str |  (optional)
     types = [56] # List[int] |  (optional)
-    auth = 'auth_example' # str |  (optional)
 
     try:
         # accountTxs
-        api_response = await api_instance.account_txs(limit, by, value, authorization=authorization, index=index, types=types, auth=auth)
+        api_response = await api_instance.account_txs(limit, by, value, index=index, authorization=authorization, types=types)
         print("The response of TransactionApi->account_txs:\n")
         pprint(api_response)
     except Exception as e:
@@ -71,10 +71,9 @@ Name | Type | Description  | Notes
  **limit** | **int**|  | 
  **by** | **str**|  | 
  **value** | **str**|  | 
- **authorization** | **str**|  | [optional] 
  **index** | **int**|  | [optional] 
+ **authorization** | **str**|  | [optional] 
  **types** | [**List[int]**](int.md)|  | [optional] 
- **auth** | **str**|  | [optional] 
 
 ### Return type
 
@@ -170,7 +169,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **deposit_history**
-> DepositHistory deposit_history(account_index, l1_address, authorization=authorization, auth=auth, cursor=cursor, filter=filter)
+> DepositHistory deposit_history(authorization, account_index, l1_address, cursor=cursor, filter=filter)
 
 deposit_history
 
@@ -196,16 +195,15 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.TransactionApi(api_client)
+    authorization = 'authorization_example' # str | 
     account_index = 56 # int | 
     l1_address = 'l1_address_example' # str | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
     cursor = 'cursor_example' # str |  (optional)
     filter = 'filter_example' # str |  (optional)
 
     try:
         # deposit_history
-        api_response = await api_instance.deposit_history(account_index, l1_address, authorization=authorization, auth=auth, cursor=cursor, filter=filter)
+        api_response = await api_instance.deposit_history(authorization, account_index, l1_address, cursor=cursor, filter=filter)
         print("The response of TransactionApi->deposit_history:\n")
         pprint(api_response)
     except Exception as e:
@@ -219,10 +217,9 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **account_index** | **int**|  | 
  **l1_address** | **str**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
  **cursor** | **str**|  | [optional] 
  **filter** | **str**|  | [optional] 
 
@@ -324,7 +321,7 @@ No authorization required
 
 sendTx
 
-You need to sign the transaction body before sending it to the server. More details can be found in the Get Started docs: [Get Started For Programmers](https://apidocs.lighter.xyz/docs/get-started-for-programmers)
+You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
 
 ### Example
 
@@ -380,7 +377,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: multipart/form-data
+ - **Content-Type**: application/x-www-form-urlencoded
  - **Accept**: application/json
 
 ### HTTP response details
@@ -397,7 +394,7 @@ No authorization required
 
 sendTxBatch
 
-You need to sign the transaction body before sending it to the server. More details can be found in the Get Started docs: [Get Started For Programmers](https://apidocs.lighter.xyz/docs/get-started-for-programmers)
+You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
 
 ### Example
 
@@ -451,7 +448,79 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: multipart/form-data
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **set_account_metadata**
+> ResultCode set_account_metadata(req_set_account_metadata, authorization=authorization)
+
+setAccountMetadata
+
+Set account metadata
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.req_set_account_metadata import ReqSetAccountMetadata
+from lighter.models.result_code import ResultCode
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.TransactionApi(api_client)
+    req_set_account_metadata = lighter.ReqSetAccountMetadata() # ReqSetAccountMetadata | 
+    authorization = 'authorization_example' # str |  (optional)
+
+    try:
+        # setAccountMetadata
+        api_response = await api_instance.set_account_metadata(req_set_account_metadata, authorization=authorization)
+        print("The response of TransactionApi->set_account_metadata:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling TransactionApi->set_account_metadata: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **req_set_account_metadata** | [**ReqSetAccountMetadata**](ReqSetAccountMetadata.md)|  | 
+ **authorization** | **str**|  | [optional] 
+
+### Return type
+
+[**ResultCode**](ResultCode.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 ### HTTP response details
@@ -464,11 +533,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **transfer_history**
-> TransferHistory transfer_history(account_index, authorization=authorization, auth=auth, cursor=cursor)
+> TransferHistory transfer_history(account_index, authorization=authorization, cursor=cursor, type=type)
 
 transfer_history
 
-Get transfer history
+Get transfer history. To fetch an account index, you will need to `auth` the request, unless it's a public pool.
 
 ### Example
 
@@ -491,13 +560,13 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.TransactionApi(api_client)
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
     cursor = 'cursor_example' # str |  (optional)
+    type = ['type_example'] # List[str] |  (optional)
 
     try:
         # transfer_history
-        api_response = await api_instance.transfer_history(account_index, authorization=authorization, auth=auth, cursor=cursor)
+        api_response = await api_instance.transfer_history(account_index, authorization=authorization, cursor=cursor, type=type)
         print("The response of TransactionApi->transfer_history:\n")
         pprint(api_response)
     except Exception as e:
@@ -512,9 +581,9 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
  **cursor** | **str**|  | [optional] 
+ **type** | [**List[str]**](str.md)|  | [optional] 
 
 ### Return type
 
@@ -750,11 +819,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **withdraw_history**
-> WithdrawHistory withdraw_history(account_index, authorization=authorization, auth=auth, cursor=cursor, filter=filter)
+> WithdrawHistory withdraw_history(authorization, account_index, cursor=cursor, filter=filter)
 
 withdraw_history
 
-Get withdraw history
+Get withdraw history. Secure withdrawals are only set to `claimable` when ready. You should only expect the `completed` status on fast withdrawals via Arbitrum.
 
 ### Example
 
@@ -776,15 +845,14 @@ configuration = lighter.Configuration(
 async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.TransactionApi(api_client)
+    authorization = 'authorization_example' # str | 
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
     cursor = 'cursor_example' # str |  (optional)
     filter = 'filter_example' # str |  (optional)
 
     try:
         # withdraw_history
-        api_response = await api_instance.withdraw_history(account_index, authorization=authorization, auth=auth, cursor=cursor, filter=filter)
+        api_response = await api_instance.withdraw_history(authorization, account_index, cursor=cursor, filter=filter)
         print("The response of TransactionApi->withdraw_history:\n")
         pprint(api_response)
     except Exception as e:
@@ -798,9 +866,8 @@ async with lighter.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
  **account_index** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
  **cursor** | **str**|  | [optional] 
  **filter** | **str**|  | [optional] 
 

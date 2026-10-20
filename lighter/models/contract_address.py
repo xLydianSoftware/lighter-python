@@ -88,7 +88,7 @@ class ContractAddress(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "name": obj.get("name"),
             "address": obj.get("address")
         })

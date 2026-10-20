@@ -36,7 +36,6 @@ class AnnouncementApi:
         self.api_client = api_client
 
 
-    @validate_call
     async def announcement(
         self,
         _request_timeout: Union[
@@ -54,7 +53,7 @@ class AnnouncementApi:
     ) -> Announcements:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -100,7 +99,6 @@ class AnnouncementApi:
         ).data
 
 
-    @validate_call
     async def announcement_with_http_info(
         self,
         _request_timeout: Union[
@@ -118,7 +116,7 @@ class AnnouncementApi:
     ) -> ApiResponse[Announcements]:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -164,7 +162,6 @@ class AnnouncementApi:
         )
 
 
-    @validate_call
     async def announcement_without_preload_content(
         self,
         _request_timeout: Union[
@@ -182,7 +179,7 @@ class AnnouncementApi:
     ) -> RESTResponseType:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

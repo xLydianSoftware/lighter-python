@@ -32,8 +32,12 @@ class RiskParameters(BaseModel):
     initial_margin_req: StrictStr
     maintenance_margin_req: StrictStr
     close_out_margin_req: StrictStr
+    total_account_liquidation_threshold: StrictStr
+    usdc_collateral_with_funding: StrictStr
+    usdc_portfolio_value: StrictStr
+    total_portfolio_value: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["market_id", "collateral", "total_account_value", "initial_margin_req", "maintenance_margin_req", "close_out_margin_req"]
+    __properties: ClassVar[List[str]] = ["market_id", "collateral", "total_account_value", "initial_margin_req", "maintenance_margin_req", "close_out_margin_req", "total_account_liquidation_threshold", "usdc_collateral_with_funding", "usdc_portfolio_value", "total_portfolio_value"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -92,13 +96,17 @@ class RiskParameters(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "market_id": obj.get("market_id"),
             "collateral": obj.get("collateral"),
             "total_account_value": obj.get("total_account_value"),
             "initial_margin_req": obj.get("initial_margin_req"),
             "maintenance_margin_req": obj.get("maintenance_margin_req"),
-            "close_out_margin_req": obj.get("close_out_margin_req")
+            "close_out_margin_req": obj.get("close_out_margin_req"),
+            "total_account_liquidation_threshold": obj.get("total_account_liquidation_threshold"),
+            "usdc_collateral_with_funding": obj.get("usdc_collateral_with_funding"),
+            "usdc_portfolio_value": obj.get("usdc_portfolio_value"),
+            "total_portfolio_value": obj.get("total_portfolio_value")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
